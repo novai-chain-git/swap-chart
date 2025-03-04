@@ -1,0 +1,62 @@
+.lang_active {
+  background-color: rgba(67, 82, 212, 0.03);
+}
+
+.dropdown_item {
+  transform: translateX(-50%) scale(1);
+}
+.dropdown_items {
+  transform: translateX(-50%) scale(0);
+}
+
+@media screen and (max-width: 768px) {
+  .dropdown_item {
+    transform: translateX(0) scale(1);
+  }
+  .dropdown_items {
+    transform: translateX(0) scale(0);
+  }
+}
+.show_meny {
+  transform: translateX(0) scale(1);
+}
+.hide_menu {
+  transform: translateX(0) scale(0);
+}
+
+.setup_menu_item {
+  display: flex;
+  text-decoration: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  line-height: 30px;
+  font-size: 14px;
+  color: #000;
+}
+.setup_menu_item_active {
+  background: rgba(67, 82, 212, 0.03);
+  color: #4352d4;
+}
+#switch-chain-tip {
+  position: fixed;
+  z-index: 200;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #edffec;
+  border-radius: 10px;
+  border: 1px solid #57bb60;
+  padding: 14px 20px;
+  transition: all 0.3s;
+  pointer-events: none;
+  opacity: 0;
+}
+#switch-chain-tip.open {
+  top: 50%;
+  opacity: 1;
+}
+.switch-chain-tip-icon {
+  width: 18px;
+  margin-right: 6px;
+}

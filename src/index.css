@@ -1,0 +1,27 @@
+@font-face {
+  font-family: 'Orbitron';
+  src: url('./assets/font/orbitron/orbitron-black.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'OrbitronBold';
+  src: url('./assets/font/orbitron/orbitron-bold.otf') format('opentype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'OrbitronMedium';
+  src: url('./assets/font/orbitron/orbitron-medium.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('./assets/font/poppins/Poppins-Regular.ttf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
