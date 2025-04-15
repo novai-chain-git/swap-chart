@@ -148,7 +148,7 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
       }
     },
     {
-      lable: t('Table$title', { title: token?.toUpperCase() }),
+      lable: t('Table$title', { title: token }),
       dataIndex: 'amount',
       render: ({ row }: { row: any }) => getFormatNumber(row.amount, priceDecimals),
       style: {
