@@ -6,13 +6,14 @@ import { BIPS_BASE, DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE } from '
 import { getTradeVersion, useV1TradeExchangeAddress } from '../data/V1'
 import { useTransactionAdder } from '../state/transactions/hooks'
 // import { calculateGasMargin, getRouterContract, isAddress, shortenAddress } from '../utils'
-import { getRouterContract, isAddress, shortenAddress } from '../utils'
+import { getRouterContract, getNaiRouterContract, calculateGasMargin, isAddress, shortenAddress } from '../utils'
 import isZero from '../utils/isZero'
 import v1SwapArguments from '../utils/v1SwapArguments'
 import { useActiveWeb3React } from './index'
 import { useV1ExchangeContract } from './useContract'
 import useENS from './useENS'
 import { Version } from './useToggledVersion'
+import { parseUnits, formatUnits } from '@ethersproject/units'
 
 export enum SwapCallbackState {
   INVALID,
@@ -61,8 +62,20 @@ function useSwapCallArguments(
     const tradeVersion = getTradeVersion(trade)
     if (!trade || !recipient || !library || !account || !tradeVersion || !chainId) return []
 
-    const contract: Contract | null =
-      tradeVersion === Version.v2 ? getRouterContract(chainId, library, account) : v1Exchange
+    // const contract: Contract | null =
+    //   tradeVersion === Version.v2 ? getRouterContract(chainId, library, account) : v1Exchange
+    // if (!contract) {
+    //   return []
+    // }
+    const nai = '0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7'
+    const naiType =
+      (trade.inputAmount.currency as any).address === nai || (trade.outputAmount.currency as any).address == nai
+    const contract: Contract | null = naiType
+      ? getNaiRouterContract(chainId, library, account)
+      : tradeVersion === Version.v2
+      ? getRouterContract(chainId, library, account)
+      : v1Exchange
+    console.log(contract, 'contract')
     if (!contract) {
       return []
     }
@@ -206,12 +219,28 @@ export function useSwapCallback(
           },
           gasEstimate
         } = successfulEstimation */
+        const nai = '0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7'
+
+        const nUSDT: string = '0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37'
+        let outAddress = (trade.outputAmount.currency as any).address
+
+        let inAddress = (trade.inputAmount.currency as any).address
+        const naiType = (outAddress === nai || inAddress == nai) && (outAddress === nUSDT || inAddress == nUSDT)
+        const decimals = (trade.inputAmount.currency as any).decimals
         const {
           contract,
           parameters: { methodName, args, value }
-        } = swapCalls[0]
+        } = swapCalls[naiType ? 1 : 0]
+ 
+        let argss = [...args]
+        argss[1] = parseUnits('0', decimals).toString()
+    console.log(args, 'argss：', argss)
         return contract[methodName](...args, {
-          // gasLimit: calculateGasMargin(gasEstimate),
+          ...(naiType
+            ? {
+                gasLimit: 500000
+              }
+            : {}),
           ...(value && !isZero(value) ? { value, from: account } : { from: account })
         })
           .then((response: any) => {

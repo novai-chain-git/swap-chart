@@ -5,6 +5,8 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { injected } from '../connectors'
 
 export const ROUTER_ADDRESS = process.env.REACT_APP_ROUTER_ADDRESS as string
+export const NAI_HEYUE_ADDRESS = process.env.REACT_APP_NAI_HEYUE_ADDRESS as string
+export const NAI_ADDRESS = process.env.REACT_APP_NAI_ADDRESS as string
 
 // a list of tokens by chain
 type ChainTokenList = {
