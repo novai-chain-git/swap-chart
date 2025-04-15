@@ -4,7 +4,8 @@ import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
-import { ROUTER_ADDRESS } from '../constants'
+import swapNai from '../utils/abi/swapNai.json'
+import { ROUTER_ADDRESS,NAI_ADDRESS, NAI_HEYUE_ADDRESS } from '../constants'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER } from '@uniswap/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 
@@ -96,6 +97,10 @@ export function getRouterContract(_: number, library: Web3Provider, account?: st
   return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account)
 }
 
+export function getNaiRouterContract(_: number, library: Web3Provider, account?: string): Contract {
+
+    return new Contract(NAI_HEYUE_ADDRESS, swapNai, getProviderOrSigner(library, account) as any)
+}
 export function escapeRegExp(string: string): string {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }

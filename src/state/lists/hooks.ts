@@ -47,6 +47,21 @@ const listCache: WeakMap<TokenList, TokenAddressMap> | null =
 export function listToTokenMap(list: TokenList): TokenAddressMap {
   const result = listCache?.get(list)
   if (result) return result
+
+  const NAi = {
+    
+    "name": "nAI",
+    "address": "0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7",
+    "symbol": "nAI",
+    "decimals": 18,
+    "disable": false,
+    "chainId": 7256,
+    "logoURI": "localhost:/images/token/nAI.png"
+  }
+  list = {
+    ...list,
+    tokens: [...list.tokens, NAi]
+  }
   const map = list.tokens.reduce<TokenAddressMap>(
     (tokenMap, tokenInfo) => {
       const tags: TagInfo[] =

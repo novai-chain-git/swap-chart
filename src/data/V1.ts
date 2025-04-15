@@ -143,6 +143,7 @@ export function getTradeVersion(trade?: Trade): Version | undefined {
   return undefined
 }
 
+
 // returns the v1 exchange against which a trade should be executed
 export function useV1TradeExchangeAddress(trade: Trade | undefined): string | undefined {
   const tokenAddress: string | undefined = useMemo(() => {
