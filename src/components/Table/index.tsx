@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, ComponentType } from 'react'
 import styled from 'styled-components'
 //border: 1px solid #e8e8e8;
 
@@ -15,7 +15,7 @@ const TableTitle = styled.div`
 
 const TableHeadDev = styled.div`
   width: 100%;
-  overflow: auto;
+  /* overflow: auto; */
 `
 const TableBodyDev = styled.div`
   width: 100%;
@@ -26,7 +26,7 @@ const TableBodyDev = styled.div`
 const Table = styled.table`
   width: 100%;
   border-spacing: 0px;
-  overflow: hidden;
+  /* overflow: hidden; */
   border-collapse: collapse;
 `
 
@@ -68,20 +68,22 @@ const FilterDropdownCom = styled.div`
   }
 `
 
-interface filtersType {
+interface FiltersType {
   lable: string
   value: any
 }
 
-interface columnsType {
-  lable: string
+export interface ColumnsType {
+  lable?: string
   dataIndex: any
   render?: any
-  filters?: filtersType[]
+  filters?: FiltersType[]
+  header?: () => React.ReactNode
+  column?: () => React.ReactNode
   style?: any
 }
 interface TableProps {
-  columns: columnsType[]
+  columns: ColumnsType[]
   dataSource: any[]
   title?: string
 }
@@ -90,7 +92,7 @@ export const TableTdComponent = function({ value }: { value: any }) {
   return <TableTd>{value}</TableTd>
 }
 
-const FilterDropdownComs = function({ row }: { row: columnsType }) {
+const FilterDropdownComs = function({ row }: { row: ColumnsType }) {
   return (
     <>
       <FilterDropdownCom>
@@ -114,7 +116,8 @@ export const TableComponent = function({ columns, dataSource, title = '' }: Tabl
         <TableTr>
           {columns.map((item, index) => (
             <TableTh key={index} style={item.style ? item.style : {}}>
-              {item.filters ? <FilterDropdownComs row={item} /> : item.lable}
+              {/* {item.filters ? <FilterDropdownComs row={item} /> : item.lable} */}
+              {item.filters ? <FilterDropdownComs row={item} /> : item.header ? item.header() : item.lable}
             </TableTh>
           ))}
         </TableTr>
@@ -128,7 +131,16 @@ export const TableComponent = function({ columns, dataSource, title = '' }: Tabl
         {dataSource.map((item, index) => (
           <TableTr key={index}>
             {columns.map((items, key) => (
-              <TableTdComponent key={key} value={items.render ? items.render({ row: item }) : item[items.dataIndex]} />
+              <TableTdComponent
+                key={key}
+                value={
+                  items.render
+                    ? items.render({ row: item, index: index })
+                    : item.column
+                    ? item.column({ row: item, index: index })
+                    : item[items.dataIndex]
+                }
+              />
             ))}
           </TableTr>
         ))}
@@ -138,7 +150,7 @@ export const TableComponent = function({ columns, dataSource, title = '' }: Tabl
 
   return (
     <>
-      <TableTitle>{title}</TableTitle>
+      {title && <TableTitle>{title}</TableTitle>}
       <TableHeadDev>
         <Table>
           <TableHeaderComponent />

@@ -12,6 +12,15 @@ import { Colors } from './styled'
 
 export * from './components'
 
+export const gapValues = {
+  xs: '4px',
+  sm: '8px',
+  md: '12px',
+  lg: '24px',
+  xl: '32px'
+}
+export type Gap = keyof typeof gapValues
+
 const MEDIA_WIDTHS = {
   upToExtraSmall: 500,
   upToSmall: 600,

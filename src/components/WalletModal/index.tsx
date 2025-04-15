@@ -189,7 +189,7 @@ export default function WalletModal({
         openChainTip()
       } catch (error) {
         console.log('switchNetwork error：', error)
-        if (error?.message?.includes('Unrecognized chain ID')) {
+        if (error && error?.message?.includes('Unrecognized chain ID')) {
           await walletAddChain()
         }
       }
