@@ -245,7 +245,7 @@ const TableColumn = function() {
     {
       lable: 'NUSDT',
       title:"nAI/nUSDT",
-      address:"0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7",
+      address:"0x53788c75206c3BD55b2304d627C1fF89dc58b02C",
       coin: 'WNOVAI',
       protocol: 'v2',
       fees: '0.05%',
