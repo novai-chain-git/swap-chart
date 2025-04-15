@@ -75,7 +75,8 @@ const Chart = props => {
         <SelectType list={currList} activeOption={activeCurr} setActiveOption={setActiveCurr} />
       </div>
       <div className={style.chartContent}>
-        <ChartComponent {...props} priceDecimals={activeCurr?.priceDecimals} token={activeCurr?.value}></ChartComponent>
+        {/* { activeCurr?.value.toUpperCase() != 'NAI' && } */}
+        <ChartComponent {...props} priceDecimals={activeCurr?.priceDecimals} token={activeCurr?.value} />
       </div>
       <Table token={activeCurr?.value} priceDecimals={activeCurr?.priceDecimals} />
     </div>
