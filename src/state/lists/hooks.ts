@@ -51,7 +51,7 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   const NAi = {
     
     "name": "nAI",
-    "address": "0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7",
+    "address": "0x53788c75206c3BD55b2304d627C1fF89dc58b02C",
     "symbol": "nAI",
     "decimals": 18,
     "disable": false,

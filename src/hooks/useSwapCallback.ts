@@ -67,7 +67,7 @@ function useSwapCallArguments(
     // if (!contract) {
     //   return []
     // }
-    const nai = '0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7'
+    const nai = '0x53788c75206c3BD55b2304d627C1fF89dc58b02C'
     const naiType =
       (trade.inputAmount.currency as any).address === nai || (trade.outputAmount.currency as any).address == nai
     const contract: Contract | null = naiType
@@ -219,7 +219,7 @@ export function useSwapCallback(
           },
           gasEstimate
         } = successfulEstimation */
-        const nai = '0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7'
+        const nai = '0x53788c75206c3BD55b2304d627C1fF89dc58b02C'
 
         const nUSDT: string = '0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37'
         let outAddress = (trade.outputAmount.currency as any).address
