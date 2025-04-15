@@ -32,6 +32,14 @@ const Chart = props => {
       areaColor: '#009bff',
       img: '/images/token/novai.svg',
       imgb: '/images/token/novai.svg'
+    },
+    {
+      name: 'nAI',
+      value: 'nAI',
+      lineColor: '#006bff',
+      areaColor: '#009bff',
+      img: '/images/token/nAI.png',
+      imgb: '/images/token/nAI.png'
     }
   ]
   // 选择币种
