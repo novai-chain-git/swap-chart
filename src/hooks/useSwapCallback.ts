@@ -234,6 +234,7 @@ export function useSwapCallback(
  
         let argss = [...args]
         argss[1] = parseUnits('0', decimals).toString()
+        console.log(args,'args')
         const finalArgs = (naiType) ? argss : args;
         return contract[methodName](...finalArgs, {
           ...(naiType

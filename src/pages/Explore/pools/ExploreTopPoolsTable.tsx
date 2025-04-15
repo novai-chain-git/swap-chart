@@ -71,7 +71,7 @@ const TableColumn = function() {
       render: ({ index }: { index: number }) => index + 1
     },
     {
-      dataIndex: 'index',
+      dataIndex: 'title',
       header: function TokenHeader() {
         return (
           <TokenTableHeader
@@ -166,17 +166,34 @@ const TableColumn = function() {
   const [dataSource, setDataSource] = useState([
     {
       lable: 'NOVAI',
+      title:"NOVAI/nUSDT",
+      address:"0x4aC2abdDF928C3D01a208e880E101a1423dB6C73",
       coin: 'USDT',
       protocol: 'v2',
       fees: '0.05%',
-      tvl: '',
-      year: '',
-      day: '',
-      thirty: '',
-      dayTvl: ''
+      tvl: 'NOVAI',
+      year: 'NOVAI',
+      day: 'NOVAI',
+      thirty: 'NOVAI',
+      dayTvl: 'NOVAI'
+    },
+    {
+      lable: 'NOVAI',
+      title:"NOVAI/WNOVAI",
+      address:"0x4aC2abdDF928C3D01a208e880E101a1423dB6C73",
+      coin: 'USDT',
+      protocol: 'v2',
+      fees: '0.05%',
+      tvl: 'NOVAI',
+      year: 'NOVAI',
+      day: 'NOVAI',
+      thirty: 'NOVAI',
+      dayTvl: 'NOVAI'
     },
     {
       lable: 'NUSDT',
+      title:"nUSDT/NOVAI",
+      address:"0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
       coin: 'wNOVAI',
       protocol: 'v2',
       fees: '0.05%',
@@ -188,6 +205,60 @@ const TableColumn = function() {
     },
     {
       lable: 'NUSDT',
+      title:"nUSDT/WNOVAI",
+      address:"0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
+      coin: 'WNOVAI',
+      protocol: 'v2',
+      fees: '0.05%',
+      tvl: '',
+      year: '',
+      day: '',
+      thirty: '',
+      dayTvl: ''
+    },
+    {
+      lable: 'NUSDT',
+      title:"WNOVAI/nUSDT",
+      address:"0x2Ab2b37CfB556fE54f9d1B91A8dA8066d0fa3226",
+      coin: 'WNOVAI',
+      protocol: 'v2',
+      fees: '0.05%',
+      tvl: '',
+      year: '',
+      day: '',
+      thirty: '',
+      dayTvl: ''
+    },
+    {
+      lable: 'NUSDT',
+      title:"WNOVAI/NOVAI",
+      address:"0x2Ab2b37CfB556fE54f9d1B91A8dA8066d0fa3226",
+      coin: 'WNOVAI',
+      protocol: 'v2',
+      fees: '0.05%',
+      tvl: '',
+      year: '',
+      day: '',
+      thirty: '',
+      dayTvl: ''
+    },
+    {
+      lable: 'NUSDT',
+      title:"nAI/nUSDT",
+      address:"0xFC864E04D1c05bFf255e8790aaEd5Fe8c1749ad7",
+      coin: 'WNOVAI',
+      protocol: 'v2',
+      fees: '0.05%',
+      tvl: '',
+      year: '',
+      day: '',
+      thirty: '',
+      dayTvl: ''
+    },
+    {
+      lable: 'NUSDT',
+      title:"nUSDT/nAI",
+      address:"0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
       coin: 'WNOVAI',
       protocol: 'v2',
       fees: '0.05%',
