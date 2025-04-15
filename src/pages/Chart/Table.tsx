@@ -17,6 +17,7 @@ const FlexBox = styled.div`
   color: #ff5f52;}
   }
 `
+
 const ChartTitle = styled.div`
   font-size: 16px;
   font-family: 'OrbitronMedium';
@@ -191,7 +192,7 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
   //获取统计数据
   const getStasData = async () => {
     try {
-      const res = await getStat(token?.toUpperCase())
+      const res = await getStat(token)
       console.log(res, 'resresres')
       if (res.code === 0) {
         //let {} = res.data
