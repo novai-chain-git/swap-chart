@@ -16,6 +16,15 @@
   "keywords": ["default"],
   "tokens": [
     {
+    "name": "nAI",
+    "address": "0x53788c75206c3BD55b2304d627C1fF89dc58b02C",
+    "symbol": "nAI",
+    "decimals": 18,
+    "disable": false,
+    "chainId": 7256,
+    "logoURI": "localhost:/images/token/nai.png"
+    },
+    {
       "name": "Wrapped nUSDT",
       "address": "0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
       "symbol": "nUSDT",

@@ -246,6 +246,7 @@
   "tokens.table.search.placeholder.tokens": "搜索代币",
   "tokens.table.search.placeholder.transactions": "Search transactions",
   
+  "common.uniswapTVL": "Uniswap TVL",
   "common.tokenName": "代币名称",
   "common.price": "价格",
   "common.volume": "交易量",
@@ -267,5 +268,7 @@
   "common.wallet.label": "钱包",
   "common.assemble": "总",
   "common.protocol": "協定",
-  "common.fees": "費用"
+  "common.fees": "費用",
+  "bridge": "跨链桥",
+  "loading": "加载中..."
 }

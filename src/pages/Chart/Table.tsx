@@ -4,18 +4,24 @@ import styled from 'styled-components'
 import { TableComponent } from '../../components/Table'
 import { debounce, getFormatNumber } from '../../utils/debounce'
 import { getStat, getTransactions } from '../../requests'
+import { SearchBar } from '../../components/Explore/SearchBar'
+import { Flex } from 'rebass/styled-components'
 
 const FlexBox = styled.div`
   border-radius: 10px;
   background: ${({ theme }) => theme.bg9};
   padding: 14px 0 20px 0;
-  margin-top: 20px;
- border: 1px solid ${({ theme }) => theme.border1};
-  .renders{
-  color: #21c95e;}
-  .render{
-  color: #ff5f52;}
+  margin-top: 10px;
+  border: 1px solid ${({ theme }) => theme.border1};
+  .renders {
+    color: #21c95e;
   }
+  .render {
+    color: #ff5f52;
+  }
+`
+const ChartSearchBar = styled(Flex)`
+  margin: 10px 0;
 `
 
 const ChartTitle = styled.div`
@@ -116,6 +122,8 @@ function getDateDiff(timestamp: number, t: any) {
 export default function({ token, priceDecimals }: { token: string; priceDecimals: number }) {
   const { t, i18n } = useTranslation()
   const data = []
+  const [address, setAddress] = useState('')
+  const [isPage, setIsPage] = useState(true)
   const render = function({ row }: { row: any }) {
     return <div className={row.type == 1 ? 'renders' : 'render'}>{row.type == 1 ? t('TableBuy') : t('TableSell')}</div>
   }
@@ -187,7 +195,8 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
     marketCap: 0,
     trading24H: 0
   })
-  const [dataSource, setDataSource] = useState([])
+  const [dataSource, setDataSource] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
 
   //获取统计数据
   const getStasData = async () => {
@@ -203,28 +212,69 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
     }
   }
   //获取交易数据
-  const getRansactionsData = async () => {
+  const getRansactionsData = async (id?: any) => {
     try {
-      const res = await getTransactions({ token: token?.toUpperCase() })
+      let obj: {
+        id?: any
+        address?: any
+        token: string
+      } = {
+        token: token?.toUpperCase()
+      }
+      if (address) {
+        obj.address = address
+      }
+      if (id) {
+        obj.id = id
+      }
+      setLoading(true)
+      const res = await getTransactions(obj)
       console.log(res)
       if (res.code === 0) {
-        setDataSource(res.data)
+        if (res.data.length < 100) {
+          setIsPage(false)
+        } else {
+          setIsPage(true)
+        }
+        setDataSource(prev => [...prev, ...res.data])
+        // setDataSource(res.data)
         //let {} = res.data
         //setStat(res.data)
       }
     } catch (e) {
       console.log(e)
+    } finally {
+      setLoading(false)
     }
   }
+  const onReachBottom = () => {
+    if (dataSource.length && isPage && !loading) {
+      // console.log(,'dataSource[dataSource.length-1]')
+      getRansactionsData((dataSource[dataSource.length - 1] as { id: any })?.id)
+    }
+  }
+  const onBlur = (value: any) => {
+    console.log(value, 'valuevaluevalue')
+    setAddress(value)
+    // setLoading(false)
+    // setDataSource([])
+    // getRansactionsData()
+  }
   useEffect(() => {
-    console.log(token, 'tokentoken')
     if (!token) return
     getStasData()
-    getRansactionsData()
     // debounce(()=>{
 
     // },300)
   }, [token, i18n])
+  useEffect(() => {
+    if (!token) return
+    setDataSource([])
+    getRansactionsData()
+    // debounce(()=>{
+
+    // },300)
+  }, [token, i18n,address])
   //console.log(i18n.language,'i18n.language')
   return (
     <>
@@ -253,8 +303,18 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
           </ChartBoxComItem>
         </ChartBoxCom>
       </FlexBox>
+      <ChartSearchBar  justifyContent="flex-end">
+        <SearchBar value={address} onBlur={onBlur} placeholder={t('tokens.table.search.placeholder.transactions')} />
+      </ChartSearchBar>
       <FlexBox style={{ paddingBottom: '0px' }}>
-        <TableComponent title={t('Transactions')} dataSource={dataSource} columns={columns} />
+        <TableComponent
+          page={isPage}
+          onReachBottom={onReachBottom}
+          maxHeight="600px"
+          title={t('Transactions')}
+          dataSource={dataSource}
+          columns={columns}
+        />
       </FlexBox>
     </>
   )

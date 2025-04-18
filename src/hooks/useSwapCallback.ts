@@ -75,7 +75,6 @@ function useSwapCallArguments(
       : tradeVersion === Version.v2
       ? getRouterContract(chainId, library, account)
       : v1Exchange
-    console.log(contract, 'contract')
     if (!contract) {
       return []
     }

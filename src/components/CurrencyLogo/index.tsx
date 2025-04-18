@@ -20,7 +20,7 @@ const getTokenLogoURLByName = (name: string | undefined) => {
     case 'NOVAI':
       return '/images/token/novai.svg'
     case 'nAI':
-      return '/images/token/nAI.png'
+      return '/images/token/nai.png'
     default:
       return ''
   }

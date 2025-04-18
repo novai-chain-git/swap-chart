@@ -38,8 +38,8 @@ const Chart = props => {
       value: 'nAI',
       lineColor: '#006bff',
       areaColor: '#009bff',
-      img: '/images/token/nAI.png',
-      imgb: '/images/token/nAI.png'
+      img: '/images/token/nai.png',
+      imgb: '/images/token/nai.png'
     }
   ]
   // 选择币种

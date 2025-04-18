@@ -6,7 +6,7 @@ import dropdown from '../../assets/svg/dropdown.svg'
 import dropdownb from '../../assets/svg/dropdownb.svg'
 import { useIsDarkMode } from '../../state/user/hooks'
 
-const SelectType = ({ list, activeOption, setActiveOption, isShowText = true, isRight, smIcon = false }) => {
+const SelectType = ({ list, activeOption, setActiveOption, isShowText = true, isRight= false, smIcon = false }) => {
   const isDarkMode = useIsDarkMode()
   const themeColor = theme(isDarkMode)
   const CurrClick = item => {
@@ -43,7 +43,7 @@ const SelectType = ({ list, activeOption, setActiveOption, isShowText = true, is
         </div>
         <div
           className={showOption ? `${style.currList} ${style.currListShow}` : style.currList}
-          style={isRight && { right: 0 }}
+          style={isRight == true? { right: 0 }:{}}
         >
           {list.map(item => (
             <div

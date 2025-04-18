@@ -1,4 +1,4 @@
-import { CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
+import { Currency, CurrencyAmount, JSBI, Token, Trade } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -23,7 +23,7 @@ import ProgressSteps from '../../components/ProgressSteps'
 import { BETTER_TRADE_LINK_THRESHOLD, INITIAL_ALLOWED_SLIPPAGE } from '../../constants'
 import { getTradeVersion, isTradeBetter } from '../../data/V1'
 import { useActiveWeb3React } from '../../hooks'
-import { useCurrency } from '../../hooks/Tokens'
+import { useCurrency, useAllTokens } from '../../hooks/Tokens'
 import { ApprovalState, useApproveCallbackFromTrade } from '../../hooks/useApproveCallback'
 import useENSAddress from '../../hooks/useENSAddress'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
@@ -47,8 +47,19 @@ import Loader from '../../components/Loader'
 import { useTranslation } from 'react-i18next'
 import { BackgroundImage } from '../../components/Header/BackgroundImage'
 import { theme } from '../../theme'
+import { useLocation } from 'react-router-dom'
 
+
+const useQuery = () => {
+  const { search } = useLocation()
+  return useMemo(() => new URLSearchParams(search), [search])
+}
 export default function Swap() {
+  const query = useQuery()
+  const inputValue = query.get('input')
+  const outputValue = query.get('output')
+  console.log('query', inputValue, outputValue)
+    const allTokens = useAllTokens()
   const { t } = useTranslation()
 
   const ArrowDiv = styled.div`
@@ -70,12 +81,12 @@ export default function Swap() {
   `
 
   const loadedUrlParams = useDefaultsFromURLSearch()
-
   // token warning stuff
   const [loadedInputCurrency, loadedOutputCurrency] = [
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId)
   ]
+  console.log(loadedUrlParams?.inputCurrencyId,loadedUrlParams?.outputCurrencyId,'loadedInputCurrency')
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const urlLoadedTokens: Token[] = useMemo(
     () => [loadedInputCurrency, loadedOutputCurrency]?.filter((c): c is Token => c instanceof Token) ?? [],
@@ -295,6 +306,27 @@ export default function Swap() {
     onCurrencySelection
   ])
 
+   const itemData = useMemo(() => ([Currency.ETHER, ...Object.values(allTokens)]), [allTokens, Currency.ETHER])
+
+  console.log(Object.values(allTokens),itemData,'allTokens')
+  useEffect(() => {
+    if(inputValue && outputValue && itemData){
+      itemData.forEach(item => {
+        if(item?.symbol?.toLowerCase() === inputValue.toLowerCase()){
+          console.log(item,'item')
+           onCurrencySelection(Field.INPUT, item)
+        }
+        if(item?.symbol?.toLowerCase() === outputValue.toLowerCase()){
+          onCurrencySelection(Field.OUTPUT, item)
+        }
+      })
+    }
+   // return []
+  }, [inputValue,outputValue, itemData])
+  // useEffect(() => {
+ 
+  // }, [inputValue,outputValue, itemData])
+console.log(currencies,'currencies')
   return (
     <>
       <TokenWarningModal

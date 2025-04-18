@@ -1,15 +1,21 @@
-import React, { ComponentType, NamedExoticComponent, useMemo, useState } from 'react'
+import React, { ComponentType, useEffect, NamedExoticComponent, useMemo, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 import { TopTokensTable } from './tokens'
 import { ExploreTopPoolTable } from './pools/ExploreTopPoolsTable'
-import { RecentTransactions } from './transactions/RecentTransactions'
+import { TableColumn } from './transactions/RecentTransactions'
 import { Trans, useTranslation } from 'react-i18next'
 import { ExploreTab, InterfaceElementName } from './type'
 import { RowBetween } from '../../components/Row'
 import { Box, Text, Flex, Card } from 'rebass/styled-components'
 import { NavLink } from 'react-router-dom'
 import { SearchBar } from '../../components/Explore/SearchBar'
+import style from './chart.module.css'
+import SelectType from '../../components/SelectType'
+
+import { getKline, getCategoryList, getKlineHistory } from '../../requests'
+// import { ExploreChartsSection } from './charts/ExploreChartsSection'
+import ChartComponent from '../../components/ChartComponents'
 
 interface Page {
   title: React.ReactNode
@@ -31,38 +37,99 @@ export const HeaderTab = styled(Text)<{ active?: boolean }>`
   cursor: pointer;
   color: ${props => (props.active ? '' : '#7D7D7D')};
 `
-function usePages(): Array<Page> {
-  const { t } = useTranslation()
-  return [
-    // {
-    //   title: t('common.tokens'),
-    //   key: ExploreTab.Tokens,
-    //   component: TopTokensTable,
-    //   loggingElementName: InterfaceElementName.EXPLORE_TOKENS_TAB
-    // },
-    {
-      title: t('common.pools'),
-      key: ExploreTab.Pools,
-      component: ExploreTopPoolTable,
-      loggingElementName: InterfaceElementName.EXPLORE_POOLS_TAB
-    },
-    {
-      title: t('common.transactions'),
-      key: ExploreTab.Transactions,
-      component: RecentTransactions,
-      loggingElementName: InterfaceElementName.EXPLORE_TRANSACTIONS_TAB
-    }
-  ]
-}
+// function usePages(): Array<Page> {
+//   const { t } = useTranslation()
+//   return [
+//     // {
+//     //   title: t('common.tokens'),
+//     //   key: ExploreTab.Tokens,
+//     //   component: TopTokensTable,
+//     //   loggingElementName: InterfaceElementName.EXPLORE_TOKENS_TAB
+//     // },
+//     {
+//       title: t('common.pools'),
+//       key: ExploreTab.Pools,
+//       component: ExploreTopPoolTable,
+//       loggingElementName: InterfaceElementName.EXPLORE_POOLS_TAB
+//     },
+//     {
+//       title: t('common.transactions'),
+//       key: ExploreTab.Transactions,
+//       component: RecentTransactions,
+//       loggingElementName: InterfaceElementName.EXPLORE_TRANSACTIONS_TAB
+//     }
+//   ]
+// }
 const Main = styled.div`
   width: 100%;
   max-width: 1240px;
   padding-top: 74px;
 `
-
+interface Curr {
+  "token": string,
+  "priceDecimals": number,
+  "name": string,
+  "value": string,
+  "lineColor": string,
+  "areaColor": string,
+  "img": string,
+  "imgb": string
+}
 const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
+  const currDataList = [
+    {
+      name: 'NOVAI',
+      value: 'NOVAI',
+      lineColor: '#006bff',
+      areaColor: '#009bff',
+      img: '/images/token/novai.svg',
+      imgb: '/images/token/novai.svg'
+    },
+    {
+      name: 'nUSDT',
+      value: 'nUSDT',
+      lineColor: '#006bff',
+      areaColor: '#009bff',
+      img: '/images/token/nusd.png',
+      imgb: '/images/token/nusd.png'
+    },
+    {
+      name: 'WNOVAI',
+      value: 'WNOVAI',
+      lineColor: '#006bff',
+      areaColor: '#009bff',
+      img: '/images/token/novai.svg',
+      imgb: '/images/token/novai.svg'
+    },
+    {
+      name: 'nAI',
+      value: 'nAI',
+      lineColor: '#006bff',
+      areaColor: '#009bff',
+      img: '/images/token/nai.png',
+      imgb: '/images/token/nai.png'
+    }
+  ]
+
   const { t } = useTranslation()
-  const Pages = usePages()
+  const Pages = [
+        // {
+        //   title: t('common.tokens'),
+        //   key: ExploreTab.Tokens,
+        //   component: TopTokensTable,
+        //   loggingElementName: InterfaceElementName.EXPLORE_TOKENS_TAB
+        // },
+        {
+          title: t('common.pools'),
+          key: ExploreTab.Pools,
+          loggingElementName: InterfaceElementName.EXPLORE_POOLS_TAB
+        },
+        {
+          title: t('common.transactions'),
+          key: ExploreTab.Transactions,
+          loggingElementName: InterfaceElementName.EXPLORE_TRANSACTIONS_TAB
+        }
+      ]
   const initialKey: number = useMemo(() => {
     const key = initialTab && Pages.findIndex(page => page.key === initialTab)
 
@@ -72,7 +139,13 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
     return key
   }, [initialTab, Pages])
   const [currentTab, setCurrentTab] = useState(initialKey)
-  const { component: Page, key: currentKey } = Pages[currentTab]
+  // const { component: Page, key: currentKey } = Pages[currentTab]
+  // 选择币种
+  const [currList, setCurrList] = useState<Curr[]>([])
+  // 选中的币种
+  const [activeCurr, setActiveCurr] = useState<Curr>()
+  const [activeCurrValue, setActiveCurrValue] = useState('')
+  const [address,setAddress] = useState('')
 
   // const handleClick = (index: number) => {
   //   setCurrentTab(index)
@@ -81,38 +154,56 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
     console.log('Text clicked!', index)
     setCurrentTab(index)
   }
+  // 获取币种列表
+  const getCategoryListData = async () => {
+    const res = await getCategoryList()
+    const data = res.data.map((item: any) => {
+      const curr = currDataList.find(n => n?.value === item.token)
+      let dat = {
+        ...item,
+        ...curr,
+        value: item.token
+      }
+      console.log(dat,'dat')
+      return {
+        ...item,
+        ...curr,
+        value: item.token
+      }
+    })
+
+    setCurrList(data)
+  }
+
+  const onBlur = (value:any) => {
+    setAddress(value)
+  }
+
+  useEffect(() => {
+    getCategoryListData()
+  }, [])
+  const setActiveCurrs = function(item: Curr) {
+    setActiveCurr(item)
+    setActiveCurrValue(item.value)
+  }
+  useEffect(() => {
+    if(currList.length > 0) setActiveCurrs(currList[0])
+    
+    
+  }, [currList])
   return (
     <Main>
-      <Flex justifyContent="space-between">
-        <Flex flex="1">
-          <Flex flexDirection="column" alignItems="center">
-            <Text>{t('stats.volume.1d.long')}</Text>
-            <Text>asd</Text>
-            <Text>asd</Text>
-          </Flex>
-        </Flex>
-        <Flex flex="1">
-          <Flex flexDirection="column" alignItems="center">
-            <Text>{t('common.assemble')}Uniwap YVL</Text>
-            <Text>asd</Text>
-            <Text>asd</Text>
-          </Flex>
-        </Flex>
-        <Flex flex="1">
-          <Flex flexDirection="column" alignItems="center">
-            <Text>v2 TVL</Text>
-            <Text>asd</Text>
-            <Text>asd</Text>
-          </Flex>
-        </Flex>
-        <Flex flex="1">
-          <Flex flexDirection="column" alignItems="center">
-            <Text>v3 TVL</Text>
-            <Text>asd</Text>
-            <Text>asd</Text>
-          </Flex>
-        </Flex>
+      {/* <ExploreChartsSection /> */}
+       <SelectType  list={currList} activeOption={activeCurr} setActiveOption={setActiveCurrs} />
+      <Flex>
+        <Box p={3} width={1 / 2} color="white" bg="">
+        <ChartComponent priceDecimals={3} token={activeCurrValue} carValue={0} />
+        </Box>
+        <Box p={3} width={1 / 2} color="white" bg="">
+        <ChartComponent priceDecimals={3} token={activeCurrValue} carValue={1} />
+        </Box>
       </Flex>
+    
       <Flex alignItems="center" justifyContent="space-between">
         {Pages.map((page, index) => {
           return (
@@ -131,12 +222,16 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
           )
         })}
         <Box mx="auto" />
-        <Flex justifyContent="flex-start">
-          <SearchBar tab={currentKey} />
+        { currentTab === 1 &&
+          <Flex justifyContent="flex-start">
+          <SearchBar value={address} onBlur={onBlur} placeholder={t('tokens.table.search.placeholder.transactions')} />
         </Flex>
+        }
       </Flex>
       <CardMain>
-        <Page />
+      { currentTab === 0 && <ExploreTopPoolTable/>}
+        { currentTab === 1 && <TableColumn address={address}/>}
+        
       </CardMain>
     </Main>
   )

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, ComponentType } from 'react'
+import React, { useState, useEffect, ComponentType, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 //border: 1px solid #e8e8e8;
 
@@ -15,7 +16,8 @@ const TableTitle = styled.div`
 
 const TableHeadDev = styled.div`
   width: 100%;
-  /* overflow: auto; */
+  overflow: auto;
+  position: relative;
 `
 const TableBodyDev = styled.div`
   width: 100%;
@@ -85,7 +87,11 @@ export interface ColumnsType {
 interface TableProps {
   columns: ColumnsType[]
   dataSource: any[]
-  title?: string
+  title?: string,
+  height?: number | string,
+  maxHeight?: number | string,
+  onReachBottom?: () => void,
+  page?: Boolean
 }
 
 export const TableTdComponent = function({ value }: { value: any }) {
@@ -108,7 +114,24 @@ const FilterDropdownComs = function({ row }: { row: ColumnsType }) {
   )
 }
 
-export const TableComponent = function({ columns, dataSource, title = '' }: TableProps) {
+export const TableComponent = function({ height,maxHeight, columns, dataSource, title = '',
+  onReachBottom = () =>{}, page = false
+ }: TableProps) {
+ const { t, i18n } = useTranslation()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const handleScroll = () => {
+    const el = scrollRef.current
+    if (!el) return
+
+    // 滚动到底部判断
+    const isBottom = (el.scrollHeight - el.scrollTop - el.clientHeight) < 10
+    if (isBottom) {
+      onReachBottom()
+      console.log('到底了，触发加载更多')
+      // 触发你想执行的函数，比如加载数据
+    }
+  }
+
   const getDataSource = dataSource
   const TableHeaderComponent = function() {
     return (
@@ -151,11 +174,16 @@ export const TableComponent = function({ columns, dataSource, title = '' }: Tabl
   return (
     <>
       {title && <TableTitle>{title}</TableTitle>}
-      <TableHeadDev>
+      <TableHeadDev style={{ height, maxHeight:maxHeight }}
+      ref={scrollRef}
+      onScroll={handleScroll}>
         <Table>
           <TableHeaderComponent />
           <TableBodyComponent />
         </Table>
+        {page && <div style={{textAlign:'center',padding:'20px'}}>
+          {t('loading')}
+          </div>}
       </TableHeadDev>
       {/* <TableBodyDev>
         <Table>

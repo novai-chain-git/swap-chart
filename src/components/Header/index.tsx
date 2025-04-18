@@ -270,7 +270,8 @@ const SetupMenu = styled.div`
   right: 15px;
   transition: all 0.3s;
 `
-
+const AMenu = styled.a`
+`
 const SetupMenuItemImg = styled.img`
   width: 16px;
   height: 16px;
@@ -310,7 +311,16 @@ export default function Header() {
     },
     {
       name: t('Chart'),
-      link: '/chart',
+      link: '/explore',
+      img: smitwotup,
+      activeImg: smitup,
+      showImg: bigtwotup,
+      markShowImg: bigtwobaisetup
+    },
+    {
+      name: t('bridge'),
+      link: 'https://bridge.novaichain.com/#/',
+      external: true,
       img: smitwotup,
       activeImg: smitup,
       showImg: bigtwotup,
@@ -360,22 +370,36 @@ export default function Header() {
         </Title>
       </HeaderElement>
       <Menu>
-        {menu.map(item => (
-          <Link
-            key={item.link}
-            to={item.link}
-            style={{
-              textDecoration: 'none',
-              color: isDark ? '#fff' : '#000',
-              marginRight: '20px',
-              paddingBottom: '3px',
-              borderBottom: selectedImg.link === item.link ? '1px solid #85d25a' : '1px solid transparent'
-            }}
-            onClick={() => setSelectedImg(item)}
-          >
-            {item.name}
-          </Link>
-        ))}
+        {menu.map(item => {
+          if (item.external) {
+            return ( <AMenu href={item.link} target="_blank"
+              style={{
+                textDecoration: 'none',
+                color: isDark ? '#fff' : '#000',
+                marginRight: '20px',
+                paddingBottom: '3px',
+                borderBottom: selectedImg.link === item.link ? '1px solid #85d25a' : '1px solid transparent'
+              }} rel="noopener noreferrer">
+              {item.name}
+            </AMenu>)
+          }
+          return (
+            <Link
+              key={item.link}
+              to={item.link}
+              style={{
+                textDecoration: 'none',
+                color: isDark ? '#fff' : '#000',
+                marginRight: '20px',
+                paddingBottom: '3px',
+                borderBottom: selectedImg.link === item.link ? '1px solid #85d25a' : '1px solid transparent'
+              }}
+              onClick={() => setSelectedImg(item)}
+            >
+              {item.name}
+            </Link>
+          )
+        })}
       </Menu>
       <HeaderControls>
         <HeaderElementWrap>

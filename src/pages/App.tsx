@@ -117,12 +117,12 @@ const SwapTitleTextContent = () => {
   const location = useLocation()
   console.log('location', location.pathname)
 
-  return location.pathname === '/chart' || location.pathname === '/Explore' ? null : <SwapTitleText />
+  return location.pathname === '/chart' || location.pathname === '/explore' ? null : <SwapTitleText />
 }
 
 const SwapBg = () => {
   const location = useLocation()
-  return location.pathname === '/chart' || location.pathname === '/Explore' ? null : <BackgroundImage />
+  return location.pathname === '/chart' || location.pathname === '/explore' ? null : <BackgroundImage />
 }
 
 export const Context = React.createContext({ isLodaing: false, setIsLoading: (value: boolean) => {} })
@@ -149,7 +149,7 @@ export default function App() {
               <Popups />
               <Web3ReactManager>
                 <Switch>
-                  <Route exact strict path="/Explore" component={Explore} />
+                  <Route exact strict path="/explore" component={Explore} />
                   <Route exact strict path="/swap" component={Swap} />
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                   <Route exact strict path="/send" component={RedirectPathToSwapOnly} />

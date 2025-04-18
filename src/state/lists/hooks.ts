@@ -48,20 +48,20 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
   const result = listCache?.get(list)
   if (result) return result
 
-  const NAi = {
+  // const NAi = {
     
-    "name": "nAI",
-    "address": "0x53788c75206c3BD55b2304d627C1fF89dc58b02C",
-    "symbol": "nAI",
-    "decimals": 18,
-    "disable": false,
-    "chainId": 7256,
-    "logoURI": "localhost:/images/token/nAI.png"
-  }
-  list = {
-    ...list,
-    tokens: [...list.tokens, NAi]
-  }
+  //   "name": "nAI",
+  //   "address": "0x53788c75206c3BD55b2304d627C1fF89dc58b02C",
+  //   "symbol": "nAI",
+  //   "decimals": 18,
+  //   "disable": false,
+  //   "chainId": 7256,
+  //   "logoURI": "localhost:/images/token/nAI.png"
+  // }
+  // list = {
+  //   ...list,
+  //   tokens: list.tokens
+  // }
   const map = list.tokens.reduce<TokenAddressMap>(
     (tokenMap, tokenInfo) => {
       const tags: TagInfo[] =

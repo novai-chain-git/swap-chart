@@ -183,6 +183,7 @@
   "common.wallet.label": "Wallet",
   "common.assemble": "assemble",
   "common.protocol": "Protocol",
-  "common.fees": "费用"
+  "common.fees": "费用",
+  "loading": "加载中..."
 
 }

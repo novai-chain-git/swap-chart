@@ -32,23 +32,27 @@ const SearchInput = styled.input<{ isOpen?: boolean }>`
   font-weight: 485;
   padding-left: 40px;
 `
-export const SearchBar = ({ tab }: { tab?: string }) => {
+export const SearchBar = ({ placeholder,value, onBlur= () =>{} }: { placeholder?: string,value:any,onBlur?:(value:any) => void }) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const currentString = 'useAtomValue(exploreSearchStringAtom)'
   const [localFilterString, setLocalFilterString] = useState('')
-  const placeholdersText: Record<string, string> = {
-    [ExploreTab.Tokens]: t('tokens.table.search.placeholder.tokens'),
-    [ExploreTab.Pools]: t('tokens.table.search.placeholder.pools'),
-    [ExploreTab.Transactions]: t('tokens.table.search.placeholder.transactions')
-  }
+  const [searchText, setSearchText] = useState('')
+  // const placeholdersText: Record<string, string> = {
+  //   // [ExploreTab.Tokens]: t('tokens.table.search.placeholder.tokens'),
+  //   [ExploreTab.Pools]: t('tokens.table.search.placeholder.pools'),
+  //   [ExploreTab.Transactions]: t('tokens.table.search.placeholder.transactions')
+  // }
   const handleFocus = () => setIsOpen(true)
 
-  const handleBlur = () => {
-    if (localFilterString === '') {
+  const handleBlur = (e:any) => {
+    onBlur(e.target.value)
+    
+    if (searchText === '') {
       setIsOpen(false)
     }
   }
+
   return (
     <Cards pr={12} pl={12}>
       <SearchIconCommit
@@ -62,9 +66,10 @@ export const SearchBar = ({ tab }: { tab?: string }) => {
         isOpen={isOpen}
         autoComplete="off"
         type="search"
-        value={localFilterString}
-        onChange={({ target: { value } }) => setLocalFilterString(value)}
-        placeholder={placeholdersText[tab ?? ExploreTab.Tokens]}
+        value={searchText}
+      
+        onChange={(e) => setSearchText(e.target.value)}
+        placeholder={placeholder}
         onFocus={handleFocus}
         onBlur={handleBlur}
       />
