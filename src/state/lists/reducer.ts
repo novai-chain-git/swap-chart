@@ -160,7 +160,7 @@ export default createReducer(initialState, builder =>
           }
         })
       }
-
+      state.selectedListUrl = DEFAULT_TOKEN_LIST_URL
       state.lastInitializedDefaultListOfLists = DEFAULT_LIST_OF_LISTS
     })
 )

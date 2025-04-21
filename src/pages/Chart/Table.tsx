@@ -7,6 +7,8 @@ import { getStat, getTransactions } from '../../requests'
 import { SearchBar } from '../../components/Explore/SearchBar'
 import { Flex } from 'rebass/styled-components'
 
+import { getContractFactory, coinList } from '../Explore/pools/utils'
+
 const FlexBox = styled.div`
   border-radius: 10px;
   background: ${({ theme }) => theme.bg9};
@@ -195,6 +197,9 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
     marketCap: 0,
     trading24H: 0
   })
+  
+  const [lockedPositionType, setLockedPositionType] = useState(true)
+  const [lockedPosition, setLockedPosition] = useState<any>(0)
   const [dataSource, setDataSource] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -260,6 +265,23 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
     // setDataSource([])
     // getRansactionsData()
   }
+
+  const getLockedPosition = async ()=>{
+    let num:any = 0 
+     setLockedPosition(num)
+    let src = coinList.find(item => item.lable.toUpperCase() == token.toUpperCase())
+    //getContractFactory()
+    if(src && src.address){
+      try {
+       num = await getContractFactory(src.address)
+      console.log(num,'src')
+      setLockedPosition(num * 2)
+      
+      }catch(e){}
+      
+    }
+    console.log(src,'src')
+  }
   useEffect(() => {
     if (!token) return
     getStasData()
@@ -271,10 +293,13 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
     if (!token) return
     setDataSource([])
     getRansactionsData()
+    getLockedPosition()
     // debounce(()=>{
 
     // },300)
   }, [token, i18n,address])
+
+  
   //console.log(i18n.language,'i18n.language')
   return (
     <>
@@ -284,12 +309,13 @@ export default function({ token, priceDecimals }: { token: string; priceDecimals
           <ChartBoxComItem>
             <div className="title">{t('TVL')}</div>
             {/* <div className="value">{formatNumber(stat.lockedPosition, i18n.language, priceDecimals)}</div> */}
-            <div className="value">{stat.lockedPosition.toFixed(0)}</div>
+            <div className="value">{lockedPosition.toFixed(0)}</div>
           </ChartBoxComItem>
           <ChartBoxComItem>
             <div className="title">{t('Market cap')}</div>
+            <div className="value">{lockedPosition.toFixed(0)}</div>
             {/* <div className="value">${formatNumber(stat.marketCap, i18n.language, priceDecimals)}</div> */}
-            <div className="value">{stat.marketCap.toFixed(0)}</div>
+            {/* <div className="value">{stat.marketCap.toFixed(0)}</div> */}
           </ChartBoxComItem>
           <ChartBoxComItem>
             <div className="title">{t('FDV')}</div>

@@ -91,7 +91,7 @@ function CurrencyRow({
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
-  style: CSSProperties
+  style?: CSSProperties
 }) {
   const { account, chainId } = useActiveWeb3React()
   const key = currencyKey(currency)
@@ -107,7 +107,7 @@ function CurrencyRow({
   // only show add or remove buttons if not on selected list
   return (
     <MenuItem
-      style={style}
+      style={style?style:{}}
       className={`token-item-${key}`}
       onClick={() => (isSelected ? null : onSelect())}
       // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -184,7 +184,6 @@ export default function CurrencyList({
       const handleSelect = () => onCurrencySelect(currency)
       return (
         <CurrencyRow
-          style={style}
           currency={currency}
           isSelected={isSelected}
           onSelect={handleSelect}

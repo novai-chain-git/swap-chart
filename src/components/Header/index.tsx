@@ -311,14 +311,14 @@ export default function Header() {
     },
     {
       name: t('Chart'),
-      link: '/explore',
+      link: '/chart',
       img: smitwotup,
       activeImg: smitup,
       showImg: bigtwotup,
       markShowImg: bigtwobaisetup
     },
     {
-      name: t('bridge'),
+      name: t('Bridge'),
       link: 'https://bridge.novaichain.com/#/',
       external: true,
       img: smitwotup,

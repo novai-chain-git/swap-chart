@@ -4,17 +4,10 @@ import { useTranslation, Trans } from 'react-i18next'
 import { Box, Text, Flex, Card } from 'rebass/styled-components'
 import { ReactComponent as ArrowDown } from '../../../assets/svg/ArrowDown.svg'
 import styled from 'styled-components'
-import swapNaiAbi from '../../../constants/abis/swapNai.json'
-import factoryAbi from '../../../constants/abis/factory.json'
-import pairAbi from '../../../constants/abis/Pair.json'
-import { getNaiRouterContract } from '../../../utils'
-import { ChainId } from '@uniswap/sdk'
-import { Contract } from '@ethersproject/contracts'
-import { JsonRpcProvider } from '@ethersproject/providers'
-import { ROUTER_ADDRESS,NAI_ADDRESS, NAI_HEYUE_ADDRESS } from '../../../constants'
-import { parseUnits, formatUnits } from '@ethersproject/units'
+
 import { getVol } from '../../../requests'
 import { getFormatNumber } from '../../../utils/debounce'
+import { getContractFactory, coinList } from './utils'
 
 // import factory from '../../constants/abis/factory.json'
 
@@ -87,149 +80,13 @@ function TokenTableHeader({
 
 const TableColumn = function() {
   const { t, i18n } = useTranslation()
-  const [dataSource, setDataSource] = useState([
-    {
-      lable: 'NOVAI',
-      title: 'NOVAI/nUSDT',
-      address: '0x4aC2abdDF928C3D01a208e880E101a1423dB6C73',
-      coin: 'USDT',
-      protocol: 'v2',
-      fees: '0.05%',
-      trading24H: '',
-      trading30D: '',
-      day: 'NOVAI',
-      thirty: 'NOVAI',
-      dayTvl: 'NOVAI'
-    },
-    {
-      lable: 'nAI',
-      title: 'nAI/nUSDT',
-      address: NAI_ADDRESS,
-      coin: 'WNOVAI',
-      protocol: 'v2',
-      fees: '0.05%',
-      trading24H: '',
-      trading30D: '',
-      day: '',
-      thirty: '',
-      dayTvl: ''
-    }
-    // {
-    //   lable: 'NUSDT',
-    //   title:"nUSDT/NOVAI",
-    //   address:"0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
-    //   coin: 'wNOVAI',
-    //   protocol: 'v2',
-    //   fees: '0.05%',
-    //   tvl: '',
-    //   year: '',
-    //   day: '',
-    //   thirty: '',
-    //   dayTvl: ''
-    // },
-
-    // {
-    //   lable: 'NUSDT',
-    //   title:"WNOVAI/nUSDT",
-    //   address:"0x2Ab2b37CfB556fE54f9d1B91A8dA8066d0fa3226",
-    //   coin: 'WNOVAI',
-    //   protocol: 'v2',
-    //   fees: '0.05%',
-    //   tvl: '',
-    //   year: '',
-    //   day: '',
-    //   thirty: '',
-    //   dayTvl: ''
-    // },
-    // {
-    //   lable: 'NUSDT',
-    //   title:"nUSDT/WNOVAI",
-    //   address:"0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
-    //   coin: 'WNOVAI',
-    //   protocol: 'v2',
-    //   fees: '0.05%',
-    //   tvl: '',
-    //   year: '',
-    //   day: '',
-    //   thirty: '',
-    //   dayTvl: ''
-    // },
-
-    // {
-    //   lable: 'NUSDT',
-    //   title:"nUSDT/nAI",
-    //   address:"0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37",
-    //   coin: 'WNOVAI',
-    //   protocol: 'v2',
-    //   fees: '0.05%',
-    //   tvl: '',
-    //   year: '',
-    //   day: '',
-    //   thirty: '',
-    //   dayTvl: ''
-    // }
-  ])
-  //获取合约factory
+  const [dataSource, setDataSource] = useState(coinList)
+ 
   
-  const getContractFactory = async (address:string):Promise<any> => {
-    const nusdt = '0xE623AED6b4dAf04553B8fEe8daECCF1cfaAece37'
-    const provider = new JsonRpcProvider('https://rpc.novaichain.com')
-    const router = new Contract(NAI_HEYUE_ADDRESS, swapNaiAbi, provider)
-  //  console.log('Uniswap V2 Factory 地址:', provider,NAI_HEYUE_ADDRESS,router)
-    try{
-      const factoryAddress = await router.factory()
-      console.log('factoryAddress', factoryAddress)
 
-      
-      const pairContract = new Contract(factoryAddress, factoryAbi, provider)
-      const pairAddress = await pairContract.getPair(address,nusdt)
-      console.log('pairAddress', pairAddress)
-
-      const reservesContract = new Contract(pairAddress, pairAbi, provider)
-      //获取合约地址
-      const token0 = await reservesContract.token0()
-      const token1 = await reservesContract.token1()
-      const [reserve0, reserve1] = await reservesContract.getReserves()
-      console.log(reserve0,'reserve0',formatUnits(reserve0,18), 'reserve1', reserve1,formatUnits(reserve1,6))
-      console.log(token0,token1,'token0')
-      let num = 0
-      if(token0 === address){
-        num = parseFloat(formatUnits(reserve1,6))
-      }else{
-        num = parseFloat(formatUnits(reserve0,6))
-      }
-      console.log(num,'num')
-      return (num * 2)
-    }catch(e){
-      console.log(e,'Uniswap V2 Factory 地址:')
-    }
-    
-
-  
-  }
-  //novai
- // getContractFactory('0x4aC2abdDF928C3D01a208e880E101a1423dB6C73')
 
   useEffect(()=>{
-    //novai
-  //  getContractFactory('0x4aC2abdDF928C3D01a208e880E101a1423dB6C73')
-    //nai
-    // getContractFactory(NAI_ADDRESS)
-    // setDataSource(prev =>
-    //   prev.map(async(item, i) => {
-    //     try{
-    //       let res = await getContractFactory(String(item.address))
-    //       console.log(res,'res')
-    //      // item.tvl = res
-    //       return {
-    //         ...item,
-    //         tvl: res
-    //       }
-    //     }finally{
 
-    //     }
-    //   })
-    // )
     dataSource.map( async (item,key) => {
       try{
         //获取tvl
@@ -240,7 +97,7 @@ const TableColumn = function() {
         console.log(data,'res')
         setDataSource(prev =>
           prev.map(items =>
-            items.address === item.address ? { ...items, tvl: res,
+            items.address === item.address ? { ...items, tvl: res * 2,
               trading24H: data.trading24H,trading30D:data.trading30D
              } : items
           )
@@ -334,16 +191,12 @@ const TableColumn = function() {
 
 
   return (
-    <div>
-      <TableComponent dataSource={dataSource} columns={columns}></TableComponent>
-    </div>
+    <TableComponent dataSource={dataSource} columns={columns}></TableComponent>
   )
 }
 
 export const ExploreTopPoolTable = memo(function ExploreTopPoolTable() {
   return (
-    <div>
-      <TableColumn></TableColumn>
-    </div>
+    <TableColumn></TableColumn>
   )
 })

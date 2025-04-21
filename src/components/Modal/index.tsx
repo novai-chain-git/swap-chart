@@ -35,7 +35,7 @@ const StyledDialogDiv = styled(({ minHeight, maxHeight, mobile, isOpen, ...rest 
   &[data-reach-dialog-content] {
     background: ${({ theme }) => theme.bgto1};
     padding: 1px;
-    width: 50vw;
+    width: 100%;
     max-width: 420px;
     margin: 0;
   }
@@ -53,11 +53,11 @@ const StyledDialogDiv = styled(({ minHeight, maxHeight, mobile, isOpen, ...rest 
 display: flex;
   border-radius: 20px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-  width: 65vw;
+  width: 65vw !important;
   margin: 0;
 `}
   ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
-  width:  85vw;
+  width:  85vw !important;
   ${mobile &&
     css`
       width: 100vw;
@@ -65,6 +65,10 @@ display: flex;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
     `}
+`}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  width:  95vw !important;
+
 `}
 `
 
@@ -83,7 +87,8 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
     margin: 0;
     align-self: ${({ mobile }) => (mobile ? 'flex-end' : 'center')};
     overflow-y: auto;
-    max-width: 420px;
+    width: 100%;
+    border-radius: 20px;
     ${({ maxHeight }) =>
       maxHeight &&
       css`
@@ -97,15 +102,15 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...r
     display: flex;
     border-radius: 20px;
     ${({ theme }) => theme.mediaWidth.upToMedium`
-      width: 65vw;
+     // width: 65vw;
       margin: 0;
     `}
     ${({ theme, mobile }) => theme.mediaWidth.upToSmall`
-      width:  85vw;
+     // width:  85vw;
       ${mobile &&
         css`
-          width: 100vw;
-          border-radius: 20px;
+        //  width: 100vw;
+        border-radius: 20px !important;
           border-bottom-left-radius: 0;
           border-bottom-right-radius: 0;
         `}

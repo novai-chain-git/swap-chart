@@ -103,10 +103,12 @@ export function useTokenList(url: string | undefined): TokenAddressMap {
 }
 
 export function useSelectedListUrl(): string | undefined {
+  
   return useSelector<AppState, AppState['lists']['selectedListUrl']>(state => state.lists.selectedListUrl)
 }
 
 export function useSelectedTokenList(): TokenAddressMap {
+  console.log(useSelectedListUrl(),'useSelectedListUrl()',useTokenList(useSelectedListUrl()))
   return useTokenList(useSelectedListUrl())
 }
 

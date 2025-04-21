@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { AutoColumn } from '../Column'
 import { RowBetween, RowFixed } from '../Row'
+import { Text } from 'rebass'
 
 export const ModalInfo = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -34,6 +35,29 @@ export const MenuItem = styled(RowBetween)`
     background: ${({ theme, disabled }) => !disabled && theme.bgto3};
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    height: 40px; !important;
+    font-size: 12px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+    height: 36px; !important;
+    font-size: 11px;
+  `}
+`
+
+export const SearchTitle = styled(Text)`
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 12px;
+  `}
+`
+export const SearchTokenName = styled(Text)`
+  font-size: 14px
+    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 12px;
+  `}
 `
 
 export const SearchInput = styled.input`
@@ -62,6 +86,15 @@ export const SearchInput = styled.input`
     border: 1px solid ${({ theme }) => theme.border2};
     outline: none;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 8px;
+    font-size: 12px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+    padding: 4px;
+    font-size: 11px;
+    
+  `}
 `
 export const Separator = styled.div`
   width: 100%;

@@ -14,8 +14,8 @@ import style from './chart.module.css'
 import SelectType from '../../components/SelectType'
 
 import { getKline, getCategoryList, getKlineHistory } from '../../requests'
+import Candlestick from "./Candlestick"
 // import { ExploreChartsSection } from './charts/ExploreChartsSection'
-import ChartComponent from '../../components/ChartComponents'
 
 interface Page {
   title: React.ReactNode
@@ -195,16 +195,17 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
     <Main>
       {/* <ExploreChartsSection /> */}
        <SelectType  list={currList} activeOption={activeCurr} setActiveOption={setActiveCurrs} />
-      <Flex>
+      {/* <Flex>
         <Box p={3} width={1 / 2} color="white" bg="">
         <ChartComponent priceDecimals={3} token={activeCurrValue} carValue={0} />
         </Box>
         <Box p={3} width={1 / 2} color="white" bg="">
         <ChartComponent priceDecimals={3} token={activeCurrValue} carValue={1} />
         </Box>
-      </Flex>
+      </Flex> */}
+      <Candlestick token={activeCurrValue} />
     
-      <Flex alignItems="center" justifyContent="space-between">
+      <Flex className='pt-20' alignItems="center" justifyContent="space-between">
         {Pages.map((page, index) => {
           return (
             <HeaderTab

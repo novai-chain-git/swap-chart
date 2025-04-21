@@ -14,6 +14,12 @@ const Tabs = styled.div`
   border-radius: 3rem;
   justify-content: space-evenly;
   font-family: 'OrbitronMedium';
+  margin-bottom: 20px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  margin-bottom: 10px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+  `}
 `
 
 const Dot = styled.div<{ isActive: boolean }>`
@@ -22,6 +28,19 @@ const Dot = styled.div<{ isActive: boolean }>`
   border-radius: 50%;
   background: ${({ theme, isActive }) => (isActive ? theme.bgto1 : theme.bg8)};
   margin-right: 9px;
+
+  
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+  margin-right: 3px;
+  width: 4px;
+  height: 4px;
+  `}
 `
 
 const activeClassName = 'ACTIVE'
@@ -50,6 +69,25 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => darken(0.1, theme.text1)};
   }
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    font-size: 18px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    font-size: 16px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 13px;
+  height: 17px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+    font-size: 11px;
+  `} ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 13px;
+  height: 17px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+    font-size: 11px;
+  `}
 `
 
 const ActiveText = styled.div`
@@ -64,7 +102,7 @@ const StyledArrowLeft = styled(ArrowLeft)`
 export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' | 'exchange' }) {
   const { t } = useTranslation()
   return (
-    <Tabs style={{ marginBottom: '20px' }}>
+    <Tabs >
       <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
         <Dot isActive={active === 'swap'} />
         {t('swap')}

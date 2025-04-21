@@ -22,6 +22,7 @@ export const gapValues = {
 export type Gap = keyof typeof gapValues
 
 const MEDIA_WIDTHS = {
+  upToExtraMINI: 300,
   upToExtraSmall: 500,
   upToSmall: 600,
   upToMedium: 960,

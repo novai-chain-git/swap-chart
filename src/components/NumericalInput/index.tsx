@@ -35,6 +35,14 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
+    ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    
+      font-size: 14px !important;
+    `}
+    ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+  
+      font-size: 13px  !important;
+    `}
 `
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group

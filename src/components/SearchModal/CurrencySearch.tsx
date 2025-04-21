@@ -20,7 +20,7 @@ import CurrencyList from './CurrencyList'
 import { filterTokens } from './filtering'
 import SortButton from './SortButton'
 import { useTokenComparator } from './sorting'
-import { PaddedColumn, SearchInput, Separator } from './styleds'
+import { PaddedColumn, SearchInput, Separator, SearchTitle, SearchTokenName } from './styleds'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 interface CurrencySearchProps {
@@ -140,10 +140,10 @@ export function CurrencySearch({
     <Column style={{ width: '100%', flex: '1 1' }}>
       <PaddedColumn gap="14px">
         <RowBetween>
-          <Text fontWeight={500} fontSize={16} fontFamily={'OrbitronMedium'}>
-            {t('selectToken')}
-            <QuestionHelper text={t('selectTokenTip')} />
-          </Text>
+          <SearchTitle fontWeight={500} fontFamily={'OrbitronMedium'}>
+          {t('selectToken')}
+          <QuestionHelper text={t('selectTokenTip')} />
+          </SearchTitle>
           <CloseIcon onClick={onDismiss} />
         </RowBetween>
         <SearchInput
@@ -159,9 +159,9 @@ export function CurrencySearch({
           <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
         )}
         <RowBetween>
-          <Text fontSize={14} fontWeight={500} fontFamily={'OrbitronMedium'}>
+          <SearchTokenName fontSize={14} fontWeight={500} fontFamily={'OrbitronMedium'}>
             {t('Token Name')}
-          </Text>
+          </SearchTokenName>
           <SortButton ascending={invertSearchOrder} toggleSortOrder={() => setInvertSearchOrder(iso => !iso)} />
         </RowBetween>
       </PaddedColumn>

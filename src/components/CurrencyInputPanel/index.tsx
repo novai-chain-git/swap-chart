@@ -18,6 +18,7 @@ const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
+
 `
 
 const CurrencySelect = styled.button<{ selected: boolean }>`
@@ -39,6 +40,10 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   :hover {
     //background-color: ${({ selected, theme }) => theme.bg2};
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     height: 28px ;
+
+  `}
 `
 
 const LabelRow = styled.div`
@@ -68,6 +73,9 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
     stroke: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
     stroke-width: 1.5px;
   }
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     width: 13px;
+  `}
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean; location: string }>`
@@ -91,7 +99,14 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
  margin: 0 0.75rem 0 0.75rem;
   //font-size:  ${({ active }) => (active ? '20px' : '16px')};
   font-size: 16px;
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+     margin: 0 4px;
+    font-size: 14px !important;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
 
+    font-size: 12px  !important;
+  `}
 `
 
 const StyledBalanceMax = styled.button`

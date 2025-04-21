@@ -25,5 +25,5 @@
     "types": ["react-spring", "jest"]
   },
   "exclude": ["node_modules", "cypress"],
-  "include": ["./src/**/*.ts", "./src/**/*.tsx", "src/pages/Exchange/index.jsx", "src/pages/Exchange/styleds.jsx", "src/theme/components/text.jsx"]
+  "include": ["./src/**/*.ts", "./src/**/*.tsx", "src/pages/Exchange/index.jsx", "src/pages/Exchange/styleds.jsx", "src/theme/components/text.jsx", "src/pages/Explore/Candlestick/index.jsx"]
 }
