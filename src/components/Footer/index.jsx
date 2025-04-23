@@ -80,7 +80,7 @@ const LogoConBtm = styled.ul`
   margin: 0;
   margin-top: 76px;
   @media (max-width: 768px) {
-    margin-top: 20px;
+    margin-top: 20px; 
   }
 `
 
@@ -182,8 +182,8 @@ const Footer = props => {
         </Sticky>
         <FooterTop>
           <LogoCon>
-            <LogoConTopLogo src={isDark ? '/images/home/logo_dark.svg' : '/images/home/logo.svg'} />
-            <LogoConTopText>{t('A Bitcoin Layer 2 integrating Al and gaming')}</LogoConTopText>
+             <LogoConTopLogo src={isDark ? '/images/home/logo_dark.svg' : '/images/home/logo.svg'} />
+            <LogoConTopText>{t('Novai Chain is a next-generation Layer 1 AI public blockchain')}</LogoConTopText> 
             <LogoConBtm>
               <LogoConBtmLi>
                 <LogoConBtmliA href="mailto:marketing@novaichain.co" target="_blank">
@@ -254,7 +254,7 @@ const Footer = props => {
             </FooterListUl>
           </FooterList>
         </FooterTop>
-        <FooterTom>Copyright© 2017-2024 novaichain.com</FooterTom>
+        <FooterTom>Copyright© 2017-2025 novaichain.com</FooterTom>
       </FooterCon>
     </FooterContainer>
   )
