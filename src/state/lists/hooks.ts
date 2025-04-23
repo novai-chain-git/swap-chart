@@ -108,7 +108,6 @@ export function useSelectedListUrl(): string | undefined {
 }
 
 export function useSelectedTokenList(): TokenAddressMap {
-  console.log(useSelectedListUrl(),'useSelectedListUrl()',useTokenList(useSelectedListUrl()))
   return useTokenList(useSelectedListUrl())
 }
 

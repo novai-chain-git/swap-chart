@@ -58,7 +58,6 @@ export default function Swap() {
   const query = useQuery()
   const inputValue = query.get('input')
   const outputValue = query.get('output')
-  console.log('query', inputValue, outputValue)
     const allTokens = useAllTokens()
   const { t } = useTranslation()
 
@@ -86,7 +85,6 @@ export default function Swap() {
     useCurrency(loadedUrlParams?.inputCurrencyId),
     useCurrency(loadedUrlParams?.outputCurrencyId)
   ]
-  console.log(loadedUrlParams?.inputCurrencyId,loadedUrlParams?.outputCurrencyId,'loadedInputCurrency')
   const [dismissTokenWarning, setDismissTokenWarning] = useState<boolean>(false)
   const urlLoadedTokens: Token[] = useMemo(
     () => [loadedInputCurrency, loadedOutputCurrency]?.filter((c): c is Token => c instanceof Token) ?? [],
@@ -308,12 +306,10 @@ export default function Swap() {
 
    const itemData = useMemo(() => ([Currency.ETHER, ...Object.values(allTokens)]), [allTokens, Currency.ETHER])
 
-  console.log(Object.values(allTokens),itemData,'allTokens')
   useEffect(() => {
     if(inputValue && outputValue && itemData){
       itemData.forEach(item => {
         if(item?.symbol?.toLowerCase() === inputValue.toLowerCase()){
-          console.log(item,'item')
            onCurrencySelection(Field.INPUT, item)
         }
         if(item?.symbol?.toLowerCase() === outputValue.toLowerCase()){
@@ -326,7 +322,6 @@ export default function Swap() {
   // useEffect(() => {
  
   // }, [inputValue,outputValue, itemData])
-console.log(currencies,'currencies')
   return (
     <>
       <TokenWarningModal

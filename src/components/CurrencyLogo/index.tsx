@@ -10,7 +10,6 @@ import Logo from '../Logo'
 const getTokenLogoURL = (address: string) =>
   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 const getTokenLogoURLByName = (name: string | undefined) => {
-  console.log('name', name)
 
   switch (name) {
     case 'USDT':

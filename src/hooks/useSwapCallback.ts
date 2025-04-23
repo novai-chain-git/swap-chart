@@ -38,6 +38,25 @@ interface FailedCall {
 
 type EstimatedSwapCall = SuccessfulCall | FailedCall */
 
+function calculateSlippagePercent(trade: Trade | undefined,
+  allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips
+  deadline: number = DEFAULT_DEADLINE_FROM_NOW,
+):Percent {
+  if (!trade || !trade.outputAmount || !trade.inputAmount) {
+    return new Percent(JSBI.BigInt(allowedSlippage), JSBI.BigInt(deadline))
+  }
+  const expectedOutput = parseFloat(trade.executionPrice.invert().toSignificant(6)) // 比例，比如 178
+  const actualOutput = parseFloat(trade.outputAmount.toExact()) / parseFloat(trade.inputAmount.toExact())
+
+  const slippageRatio = Math.abs((expectedOutput - actualOutput) / expectedOutput)
+
+  // 限制在合理范围内，避免过大滑点
+  const safeSlippage = Math.min(slippageRatio, 0.07) // 最大允许 50%
+  const bps = Math.ceil(safeSlippage * 10_000)
+
+  return new Percent(JSBI.BigInt(bps), JSBI.BigInt(10_000))
+ // return ''
+}
 /**
  * Returns the swap calls that can be used to make the trade
  * @param trade trade to execute
@@ -70,14 +89,18 @@ function useSwapCallArguments(
     const nai = '0x53788c75206c3BD55b2304d627C1fF89dc58b02C'
     const naiType =
       (trade.inputAmount.currency as any).address === nai || (trade.outputAmount.currency as any).address == nai
+  
     const contract: Contract | null = naiType
       ? getNaiRouterContract(chainId, library, account)
       : tradeVersion === Version.v2
       ? getRouterContract(chainId, library, account)
       : v1Exchange
+      
+    
     if (!contract) {
       return []
     }
+    const slippage = calculateSlippagePercent(trade,allowedSlippage, deadline)
 
     const swapMethods = []
 
@@ -86,7 +109,7 @@ function useSwapCallArguments(
         swapMethods.push(
           Router.swapCallParameters(trade, {
             feeOnTransfer: false,
-            allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+            allowedSlippage: slippage,
             recipient,
             ttl: deadline
           })
@@ -96,7 +119,7 @@ function useSwapCallArguments(
           swapMethods.push(
             Router.swapCallParameters(trade, {
               feeOnTransfer: true,
-              allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+              allowedSlippage: slippage,
               recipient,
               ttl: deadline
             })
@@ -106,7 +129,7 @@ function useSwapCallArguments(
       case Version.v1:
         swapMethods.push(
           v1SwapArguments(trade, {
-            allowedSlippage: new Percent(JSBI.BigInt(allowedSlippage), BIPS_BASE),
+            allowedSlippage: slippage,
             recipient,
             ttl: deadline
           })
@@ -127,8 +150,8 @@ export function useSwapCallback(
 ): { state: SwapCallbackState; callback: null | (() => Promise<string>); error: string | null } {
   const { account, chainId, library } = useActiveWeb3React()
 
-  const swapCalls = useSwapCallArguments(trade, allowedSlippage, deadline, recipientAddressOrName)
 
+  const swapCalls = useSwapCallArguments(trade, allowedSlippage, deadline, recipientAddressOrName)
   const addTransaction = useTransactionAdder()
 
   const { address: recipientAddress } = useENS(recipientAddressOrName)
@@ -233,8 +256,10 @@ export function useSwapCallback(
  
         let argss = [...args]
         argss[1] = parseUnits('0', decimals).toString()
-        console.log(args,'args')
-        const finalArgs = (naiType) ? argss : args;
+        
+        
+        // const finalArgs = (naiType) ? argss : args;
+        const finalArgs = args;
         return contract[methodName](...finalArgs, {
           ...(naiType
             ? {
@@ -274,7 +299,6 @@ export function useSwapCallback(
               throw new Error('Transaction rejected.')
             } else {
               // otherwise, the error was unexpected and we need to convey that
-              console.error(`Swap failed`, error, methodName, args, value)
               throw new Error(`Swap failed: ${error.message}`)
             }
           })
