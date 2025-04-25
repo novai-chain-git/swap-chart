@@ -1,0 +1,98 @@
+.ChartComponent {
+  position: relative;
+}
+.hoverData {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  font-family: 'OrbitronMedium';
+}
+.hoverDataInfo {
+  display: flex;
+  align-items: center;
+}
+.hoverDataAmplitude {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.triangleUp {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid #40b66b;
+  margin-right: 3px;
+}
+.triangleDown {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 10px solid #ff5f52;
+  margin-right: 3px;
+}
+.hoverDataTitle {
+  font-size: 32px;
+}
+.hoverDataTime {
+  color: #7d7d7d;
+}
+
+.chartBom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.chartBomBox {
+  height: 32px;
+  border-radius: 16px;
+  padding: 1px;
+}
+.intervals {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: rgb(125, 125, 125);
+  padding: 0 5px;
+  border-radius: 16px;
+  gap: 10px;
+  font-family: 'OrbitronMedium';
+}
+.intervalItemActive {
+  padding: 0 5px;
+  line-height: 20px;
+  color: rgb(34, 34, 34);
+  background: rgb(206, 206, 206);
+  border-radius: 10px;
+  font-weight: 700;
+}
+.intervalItem {
+  padding: 0 5px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.tooltipBox {
+  display: block;
+  position: absolute;
+  z-index: 99;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  border-radius: 10px;
+}
+.tooltipBoxNone {
+  display: none;
+}
+.tooltipItem {
+  line-height: 20px;
+  font-size: 14px;
+  font-family: 'OrbitronMedium';
+}
+.tooltipTitle {
+  display: inline-block;
+  width: 40px;
+  font-family: Pingfang, Arial, Helvetica, sans-serif;
+}

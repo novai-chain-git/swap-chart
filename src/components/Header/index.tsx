@@ -311,7 +311,7 @@ export default function Header() {
     },
     {
       name: t('Chart'),
-      link: '/chart',
+      link: '/picture',
       img: smitwotup,
       activeImg: smitup,
       showImg: bigtwotup,

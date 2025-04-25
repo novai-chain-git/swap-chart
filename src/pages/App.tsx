@@ -27,6 +27,7 @@ import Explore from './Explore/redirects'
 import Swap from './Swap'
 import Chart from './Chart'
 import Exchange from './Exchange'
+import Picture from './Picture'
 import { RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
 import { BackgroundImage } from '../components/Header/BackgroundImage'
 import { switchPageTitleAndDesc } from '../i18n'
@@ -117,12 +118,12 @@ const SwapTitleTextContent = () => {
   const location = useLocation()
   console.log('location', location.pathname)
 
-  return location.pathname === '/chart' || location.pathname === '/explore' ? null : <SwapTitleText />
+  return location.pathname === '/chart' || location.pathname === '/explore' || location.pathname === '/picture' ? null : <SwapTitleText />
 }
 
 const SwapBg = () => {
   const location = useLocation()
-  return location.pathname === '/chart' || location.pathname === '/explore' ? null : <BackgroundImage />
+  return location.pathname === '/chart' || location.pathname === '/explore' || location.pathname === '/picture' ? null : <BackgroundImage />
 }
 
 export const Context = React.createContext({ isLodaing: false, setIsLoading: (value: boolean) => {} })
@@ -150,6 +151,7 @@ export default function App() {
               <Web3ReactManager>
                 <Switch>
                   <Route exact strict path="/explore" component={Explore} />
+                  <Route exact strict path="/picture" component={Picture} />
                   <Route exact strict path="/swap" component={Swap} />
                   <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
                   <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
