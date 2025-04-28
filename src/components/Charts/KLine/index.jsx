@@ -277,27 +277,52 @@ const HighchartsChart = ({
           {
             type: 'ikh',
             linkedTo: 'aapl',
+            
+            // 只想显示基准线（kijunLine）
+            tenkanLine: { styles: { lineColor: 'transparent', lineWidth: 0 } },
+            chikouLine: { styles: { lineColor: 'transparent', lineWidth: 0 } },
+            senkouSpanA: { styles: { lineColor: 'transparent', lineWidth: 0 } },
+            senkouSpanB: { styles: { lineColor: 'transparent', lineWidth: 0 } },
+            senkouSpan: { color: 'transparent', negativeColor: 'transparent' }, // 云层透明
+            
+            kijunLine: { 
+              styles: { 
+                lineColor: '#12dbd1', // 基准线用红色（你可以换成你想要的颜色）
+                lineWidth: 2 // 线条宽度
+              }
+            },
+            
             tooltip: {
               pointFormat: `
-                <br/>
-                <span style="color: #666;">IKH</span><br/>
-                tenkan sen: <span style="color:{series.options.tenkanLine.styles.lineColor}">{point.tenkanSen:.3f}</span><br/>
-                kijun sen: <span style="color:{series.options.kijunLine.styles.lineColor}">{point.kijunSen:.3f}</span><br/>
-                chikou span: <span style="color:{series.options.chikouLine.styles.lineColor}">{point.chikouSpan:.3f}</span><br/>
-                senkou span A: <span style="color:{series.options.senkouSpanA.styles.lineColor}">{point.senkouSpanA:.3f}</span><br/>
-                senkou span B: <span style="color:{series.options.senkouSpanB.styles.lineColor}">{point.senkouSpanB:.3f}</span><br/>
+                <span>kijun sen: <span style="color:{series.options.kijunLine.styles.lineColor}">{point.kijunSen:.2f}</span></span>
               `
-            },
-            tenkanLine: { styles: { lineColor: '#12dbd1' } },
-            kijunLine: { styles: { lineColor: '#de70fa' } },
-            chikouLine: { styles: { lineColor: '#728efd' } },
-            senkouSpanA: { styles: { lineColor: '#2ad156' } },
-            senkouSpanB: { styles: { lineColor: '#fca18d' } },
-            senkouSpan: {
-              color: 'rgba(255, 255, 255, 0.3)',
-              negativeColor: 'rgba(237, 88, 71, 0.2)'
             }
           }
+          // {
+          //   type: 'ikh',
+          //   linkedTo: 'aapl',
+          //   tooltip: {
+          //     pointFormat: `
+          //       <br/>
+          //       <span style="color: #666;">IKH</span><br/>
+          //       tenkan sen: <span style="color:{series.options.tenkanLine.styles.lineColor}">{point.tenkanSen:.3f}</span><br/>
+          //       kijun sen: <span style="color:{series.options.kijunLine.styles.lineColor}">{point.kijunSen:.3f}</span><br/>
+          //       chikou span: <span style="color:{series.options.chikouLine.styles.lineColor}">{point.chikouSpan:.3f}</span><br/>
+          //       senkou span A: <span style="color:{series.options.senkouSpanA.styles.lineColor}">{point.senkouSpanA:.3f}</span><br/>
+          //       senkou span B: <span style="color:{series.options.senkouSpanB.styles.lineColor}">{point.senkouSpanB:.3f}</span><br/>
+          //     `
+              
+          //   },
+          //   tenkanLine: { styles: { lineColor: '#12dbd1' } },
+          //   kijunLine: { styles: { lineColor: '#de70fa' } },
+          //   chikouLine: { styles: { lineColor: '#728efd' } },
+          //   senkouSpanA: { styles: { lineColor: '#2ad156' } },
+          //   senkouSpanB: { styles: { lineColor: '#fca18d' } },
+          //   senkouSpan: {
+          //     color: 'rgba(255, 255, 255, 0.3)',
+          //     negativeColor: 'rgba(237, 88, 71, 0.2)'
+          //   }
+          // }
         ]
       })
     }
