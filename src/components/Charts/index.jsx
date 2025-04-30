@@ -99,7 +99,7 @@ const ChartComponent = props => {
     }
   ])
   // 选中的图表类型
-  const [activeGraphType, setActiveGraphType] = useState(graphType[1])
+  const [activeGraphType, setActiveGraphType] = useState(graphType[0])
 
 
 

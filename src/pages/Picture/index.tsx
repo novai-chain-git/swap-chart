@@ -186,15 +186,16 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
     //   component: TopTokensTable,
     //   loggingElementName: InterfaceElementName.EXPLORE_TOKENS_TAB
     // },
-    {
-      title: t('common.pools'),
-      key: ExploreTab.Pools,
-      loggingElementName: InterfaceElementName.EXPLORE_POOLS_TAB
-    },
+
     {
       title: t('common.transactions'),
       key: ExploreTab.Transactions,
       loggingElementName: InterfaceElementName.EXPLORE_TRANSACTIONS_TAB
+    },
+    {
+      title: t('common.pools'),
+      key: ExploreTab.Pools,
+      loggingElementName: InterfaceElementName.EXPLORE_POOLS_TAB
     }
   ]
   const initialKey: number = useMemo(() => {
@@ -371,13 +372,13 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
         )}
       </ChartSearchBar>
 
-      {currentTab === 0 && (
+      {currentTab === 1 && (
         <CardMain>
           <ExploreTopPoolTable token={activeCurr?.value} />
         </CardMain>
       )}
 
-      {currentTab === 1 && (
+      {currentTab === 0 && (
         <TableColumn address={address} token={activeCurr?.value} priceDecimals={activeCurr?.priceDecimals} />
       )}
     </Main>
