@@ -74,7 +74,7 @@ const ChartComponent = props => {
   const [data, setData] = useState([])
   // 获取图表数据
   const getChartData = async time => {
-    const res = await getKline({ token: token, type: time })
+    const res = await getKline({ token: token, type: time, rows: 200 })
     if (res.data) {
       const arr = res.data.map(item => {
         return {
@@ -88,11 +88,12 @@ const ChartComponent = props => {
 
 
   useEffect(() => {
-    getChartData(selectedInterval.value)
-    setIsDrag(false)
-  },[selectedInterval
+    if(selectedInterval.value && token){
 
-  ])
+      getChartData(selectedInterval.value)
+      setIsDrag(false)
+    }
+  },[selectedInterval, token])
 
 
   // 选中的图表类型
@@ -105,10 +106,10 @@ const ChartComponent = props => {
 
   const [isHistory, setIsHistory] = useState(true)
 
-  useEffect(() => {
-    if (!token) return
-    getChartData(intervalsData[0].value)
-  }, [token])
+  // useEffect(() => {
+  //   if (!token) return
+  //   getChartData(intervalsData[0].value)
+  // }, [token])
 
   useEffect(() => {
     setHoverData(data[hoverIndex])

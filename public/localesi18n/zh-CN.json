@@ -269,5 +269,7 @@
   "common.protocol": "协议",
   "common.fees": "費用",
   "Bridge": "跨链桥",
-  "loading": "加载中..."
+  "loading": "加载中...",
+  "HideShort-termMAs":"隐藏均线",
+  "ShowShort-termMAs":"显示均线"
 }

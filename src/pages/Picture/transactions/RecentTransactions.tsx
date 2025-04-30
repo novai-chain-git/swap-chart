@@ -11,7 +11,7 @@ import { Flex } from 'rebass/styled-components'
 const FlexBox = styled.div`
   border-radius: 10px;
   background: ${({ theme }) => theme.bg9};
-  padding: 14px 0 20px 0;
+
   margin-top: 10px;
   border: 1px solid ${({ theme }) => theme.border1};
   .renders {
@@ -19,6 +19,16 @@ const FlexBox = styled.div`
   }
   .render {
     color: #ff5f52;
+  }
+  tr{
+    
+  }
+  thead{
+  //  border-top: 1px solid ${({ theme }) => theme.border1};
+  tr{
+    border: none;
+    
+  }
   }
 `
 const ChartSearchBar = styled(Flex)`
@@ -263,7 +273,6 @@ export default function({ token, priceDecimals, address }: { token: string; pric
           page={isPage}
           onReachBottom={onReachBottom}
           maxHeight="600px"
-          title={t('Transactions')}
           dataSource={dataSource}
           columns={columns}
         />

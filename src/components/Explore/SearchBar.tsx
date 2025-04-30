@@ -22,7 +22,7 @@ export const Cards = styled(Card)`
 const SearchInput = styled.input<{ isOpen?: boolean }>`
   height: 100%;
   background-color: transparent;
-  width: ${({ isOpen }) => (isOpen ? '200px' : '0')};
+  width: ${({ isOpen }) => (isOpen ? '260px' : '0')};
   color: #ffffff;
   box-shadow: none;
   outline: none;

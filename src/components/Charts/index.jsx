@@ -25,13 +25,15 @@ const ChartComponent = props => {
   const {
     priceDecimals, // 小数位数
     token,
+    sma = false,
     colors: {
       backgroundColor = 'transparent',
       lineColor = '#85d25a',
       textColor = text1,
       areaTopColor = '#85d25a',
       areaBottomColor = 'rgba(108, 201, 109, 0.28)'
-    } = {}
+    } = {},
+    children
   } = props
 
 
@@ -51,8 +53,8 @@ const ChartComponent = props => {
 
   // 时间间隔
   const intervalsData = [
-    { name: '1M', value: 1 },
-    { name: '10M', value: 10 },
+    // { name: '1m', value: 1 },
+    // { name: '10m', value: 10 },
     { name: '1H', value: 60 },
     { name: '1D', value: 1440 },
     { name: '1W', value: -7 },
@@ -71,26 +73,13 @@ const ChartComponent = props => {
   const [isDrag, setIsDrag] = useState(false)
   // 图表数据
   const [data, setData] = useState([])
-  // 获取图表数据
-  const getChartData = async time => {
-    const res = await getKline({ token: token, type: time })
-    if (res.data) {
-      const arr = res.data.map(item => {
-        return {
-          ...item,
-          value: item.close
-        }
-      })
-      setData(arr)
-    }
-  }
+
 
   // 选中的时间间隔
-  const [selectedInterval, setSelectedInterval] = useState(intervalsData[2])
+  const [selectedInterval, setSelectedInterval] = useState(intervalsData[0])
 
   const handleIntervalClick = data => {
     setSelectedInterval(data)
-    getChartData(data.value)
     setIsDrag(false)
   }
 
@@ -110,17 +99,12 @@ const ChartComponent = props => {
     }
   ])
   // 选中的图表类型
-  const [activeGraphType, setActiveGraphType] = useState(graphType[0])
+  const [activeGraphType, setActiveGraphType] = useState(graphType[1])
 
 
-  useEffect(() => {
-    if (!token) return
-    getChartData(intervalsData[0].value)
-  }, [token])
 
-  useEffect(() => {
-    setHoverData(data[hoverIndex])
-  }, [hoverIndex])
+
+
 
   useEffect(() => {
     if (!hoverIndex || activeGraphType.value === 'line' || !hoverData || !hoverData.time) {
@@ -179,9 +163,11 @@ const ChartComponent = props => {
 
 
   return (
-    <>
-    {activeGraphType.value === 'candlestick' && <KLine selectedInterval={selectedInterval} token={token}/>}
-    {activeGraphType.value === 'line' && <BrokenLine selectedInterval={selectedInterval} epriceDecimals={priceDecimals} token={token}/>}
+    <div>
+      {children && children({ activeGraphType:activeGraphType.value })}
+    {/* {children({ activeGraphType })} */}
+    {activeGraphType.value === 'candlestick' && <KLine sma={sma} selectedInterval={selectedInterval} token={token}/>}
+    {activeGraphType.value === 'line' && <BrokenLine  selectedInterval={selectedInterval} epriceDecimals={priceDecimals} token={token}/>}
     
       <div className={style.chartBom}>
         <div className={style.chartBomBox} style={{ background: bgto1 }}>
@@ -217,7 +203,7 @@ const ChartComponent = props => {
           />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

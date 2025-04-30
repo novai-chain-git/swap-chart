@@ -63,6 +63,15 @@ export const HeaderTab = styled(Text)<{ active?: boolean }>`
 //   ]
 // }
 
+const FlexButton = styled.div`
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid #e5e5e53b;
+  border-radius: 10px;
+`
 const FlexBox = styled.div`
   border-radius: 10px;
   background: ${({ theme }) => theme.bg9};
@@ -203,6 +212,7 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
   // 选中的币种
   const [activeCurr, setActiveCurr] = useState<Curr>(currList[0])
   const [activeCurrValue, setActiveCurrValue] = useState('')
+  const [sma, setSma] = useState(false)
   const [stat, setStat] = useState({
     circulatingSupply: 0,
     lockedPosition: 0,
@@ -218,7 +228,7 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
     setCurrentTab(index)
   }
 
-  const onBlur = (value:any) => {
+  const onBlur = (value: any) => {
     setAddress(value)
   }
   // 获取币种列表
@@ -288,12 +298,23 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
 
     // },300)
   }, [activeCurr?.value, i18n])
+
+  function onSetSma() {
+    setSma(!sma)
+  }
   return (
     <Main>
-      <SelectType list={currList} activeOption={activeCurr} setActiveOption={setActiveCurrs} />
-
       {/* <Candlestick token={activeCurrValue} /> */}
-      <Charts  priceDecimals={activeCurr?.priceDecimals} token={activeCurr?.value}></Charts>
+      <Charts sma={sma} priceDecimals={activeCurr?.priceDecimals} token={activeCurr?.value}>
+        
+        {({activeGraphType}:{activeGraphType:any})=>(
+          <Flex alignItems="center" justifyContent="space-between">
+          <SelectType list={currList} activeOption={activeCurr} setActiveOption={setActiveCurrs} />
+  
+          {activeGraphType == 'candlestick' && <FlexButton onClick={onSetSma}>{sma ? t('HideShort-termMAs') : t('ShowShort-termMAs')}</FlexButton>}
+        </Flex>
+        )}
+      </Charts>
       <FlexBox>
         <ChartTitle>{t('Stats')}</ChartTitle>
         <ChartBoxCom>
@@ -339,11 +360,15 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
           )
         })}
         <Box mx="auto" />
-        { currentTab === 1 &&
+        {currentTab === 1 && (
           <Flex justifyContent="flex-start">
-          <SearchBar value={address} onBlur={onBlur} placeholder={t('tokens.table.search.placeholder.transactions')} />
-        </Flex>
-        }
+            <SearchBar
+              value={address}
+              onBlur={onBlur}
+              placeholder={t('tokens.table.search.placeholder.transactions')}
+            />
+          </Flex>
+        )}
       </ChartSearchBar>
 
       {currentTab === 0 && (
@@ -352,7 +377,9 @@ const Explore = ({ initialTab }: { initialTab?: ExploreTab }) => {
         </CardMain>
       )}
 
-      {currentTab === 1 && <TableColumn address={address} token={activeCurr?.value} priceDecimals={activeCurr?.priceDecimals} />}
+      {currentTab === 1 && (
+        <TableColumn address={address} token={activeCurr?.value} priceDecimals={activeCurr?.priceDecimals} />
+      )}
     </Main>
   )
 }
