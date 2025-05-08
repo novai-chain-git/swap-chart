@@ -53,8 +53,9 @@ const ChartComponent = props => {
 
   // 时间间隔
   const intervalsData = [
-    // { name: '1m', value: 1 },
-    // { name: '10m', value: 10 },
+    { name: '1m', value: 1 },
+    { name: '10m', value: 10 },
+    { name: '15m', value: 15 },
     { name: '1H', value: 60 },
     { name: '1D', value: 1440 },
     { name: '1W', value: -7 },
@@ -76,7 +77,7 @@ const ChartComponent = props => {
 
 
   // 选中的时间间隔
-  const [selectedInterval, setSelectedInterval] = useState(intervalsData[0])
+  const [selectedInterval, setSelectedInterval] = useState(intervalsData[3])
 
   const handleIntervalClick = data => {
     setSelectedInterval(data)

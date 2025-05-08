@@ -19,6 +19,8 @@ const HighchartsChart = ({ token }) => {
   // 图表数据
   const [data, setData] = useState([])
   const intervalsData = [
+    { name: '1m', value: 1 },
+    { name: '10m', value: 10 },
     { name: '1H', value: 60 },
     { name: '1D', value: 1440 },
     { name: '1W', value: -7 },
@@ -26,7 +28,7 @@ const HighchartsChart = ({ token }) => {
     { name: '1Y', value: -365 }
   ]
   // 选中的时间间隔
-  const [selectedInterval, setSelectedInterval] = useState(intervalsData[1])
+  const [selectedInterval, setSelectedInterval] = useState(intervalsData[0])
   const [isDrag, setIsDrag] = useState(false)
   const { isLodaing, setIsLoading } = React.useContext(Context)
   const getChartData = async () => {
