@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react'
+import React, { useRef, useEffect, useState, useMemo,useContext } from 'react'
 import { createChart, ColorType, LineType, LineStyle, TickMarkType } from 'lightweight-charts'
 import SelectType from '../SelectType'
 import { colors } from '../../theme'
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { getFormatNumber } from '../../utils/debounce'
 import { getKlineHistory, getKline } from '../../requests'
 import { Context } from '../../pages/App.tsx'
-import styled from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 
 import { formatDate } from '../../utils/dateFormat'
 import BrokenLine from './BrokenLine'
@@ -54,6 +54,8 @@ const SelectBom = styled.div`
   `}
 `
 const ChartComponent = props => {
+  
+    const theme = useContext(ThemeContext)
   const darkMode = useIsDarkMode()
   const { text1, bgto1, bg8 } = colors(darkMode)
   const { i18n } = useTranslation()
@@ -108,6 +110,7 @@ const ChartComponent = props => {
   // 图表数据
   const [data, setData] = useState([])
 
+  const [screenSize, setScreenSize] = useState(true)
   // 选中的时间间隔
   const [selectedInterval, setSelectedInterval] = useState(intervalsData[3])
 
@@ -170,22 +173,22 @@ const ChartComponent = props => {
     }
   })
 
-  // 获取历史图表数据
-  const getHistoryChartData = async () => {
-    const res = await getKlineHistory({ token: token, type: selectedInterval.value, lastTime: data[0]?.time })
-    if (res.data.length <= 0) return setIsDrag(true)
-    if (res.data) {
-      const arr = res.data.map(item => {
-        return {
-          ...item,
-          value: item.close
-        }
-      })
-      const arr1 = arr.reverse()
-      setData([...arr1, ...data])
-      // return arr1
+
+  useEffect(() => {
+    function handleResize() {
+      const width = window.innerWidth
+      if(width <= 960){
+        setScreenSize(false)
+      }else{
+        setScreenSize(true)
+      }
+
     }
-  }
+
+    handleResize() // 初始调用
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <div>
@@ -224,7 +227,7 @@ const ChartComponent = props => {
             activeOption={activeGraphType}
             setActiveOption={setActiveGraphType}
             isShowText={false}
-            isRight={true}
+            isRight={screenSize}
             smIcon={true}
           />
         </SelectBom>
