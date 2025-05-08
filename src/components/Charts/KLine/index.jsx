@@ -8,20 +8,15 @@ import { getKlineHistory, getKline } from '../../../requests'
 import { Context } from '../../../pages/App.tsx'
 
 const chark = styled.div`
-position: absolute;
-left:0;
-right: 0;
-bottom: 10px;
-background-color: #0a0a0a;
-height: 40px;
-z-index: 10;
-
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  background-color: #0a0a0a;
+  height: 40px;
+  z-index: 10;
 `
-const HighchartsChart = ({
-  token,
-  sma = false,
-  selectedInterval = { name: '1H', value: 60 }
-}) => {
+const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', value: 60 } }) => {
   const [options, setOptions] = useState(null)
 
   //const [isHistory, setIsHistory] = useState(true)
@@ -43,7 +38,6 @@ const HighchartsChart = ({
     setOptions(null)
     if (res.data) {
       setData(res.data)
-
     }
   }
   //  const type = true
@@ -60,13 +54,14 @@ const HighchartsChart = ({
           }
         })
         const arr1 = arr.reverse()
-        
+
         // return arr1
       }
     } catch (e) {
     } finally {
     }
   }
+
   useEffect(() => {
     // console.log(console.log(data,'data'))
     // if (chartRef.current?.chart) {
@@ -154,30 +149,34 @@ const HighchartsChart = ({
       // const initialMin = ohlc[ohlc.length - 61][0] // 显示最新30%
       // const initialMax = ohlc[ohlc.length - 1][0]
       // console.log(initialMin, initialMax, 'initialMin, initialMax')
-      let initialMin = ohlc[ohlc.length - 90]?ohlc[ohlc.length - 90][0]:ohlc[0][0]
+      let initialMin = ohlc[ohlc.length - 90] ? ohlc[ohlc.length - 90][0] : ohlc[0][0]
       let initialMax = ohlc[ohlc.length - 1][0]
 
-      const smaList = sma? [{
-        type: 'sma',
-        linkedTo: 'aapl',
-        params: { period: 3 },
-        color: '#FFD700',
-        name: 'MA3'
-      },
-      {
-        type: 'sma',
-        linkedTo: 'aapl',
-        params: { period: 5 },
-        color: '#00FFFF',
-        name: 'MA5'
-      },
-      {
-        type: 'sma',
-        linkedTo: 'aapl',
-        params: { period: 10 },
-        color: '#728efd',
-        name: 'MA10'
-      }]:[]
+      const smaList = sma
+        ? [
+            {
+              type: 'sma',
+              linkedTo: 'aapl',
+              params: { period: 3 },
+              color: '#FFD700',
+              name: 'MA3'
+            },
+            {
+              type: 'sma',
+              linkedTo: 'aapl',
+              params: { period: 5 },
+              color: '#00FFFF',
+              name: 'MA5'
+            },
+            {
+              type: 'sma',
+              linkedTo: 'aapl',
+              params: { period: 10 },
+              color: '#728efd',
+              name: 'MA10'
+            }
+          ]
+        : []
       // const smaList = [{
       //   type: 'sma',
       //   linkedTo: 'aapl',
@@ -205,26 +204,13 @@ const HighchartsChart = ({
           enabled: true,
           adaptToUpdatedData: false,
           baseSeries: 0,
-          height: 20,
+          height: 20
         },
 
         scrollbar: {
           enabled: true
         },
-        responsive: {
-          rules: [
-            {
-              condition: {
-                maxWidth: 800
-              },
-              chartOptions: {
-                rangeSelector: {
-                  inputEnabled: false
-                }
-              }
-            }
-          ]
-        },
+   
         chart: {
           panning: {
             enabled: true,
@@ -239,23 +225,76 @@ const HighchartsChart = ({
         },
         title: { text: token },
         plotOptions: {
+  
           series: {
-            marker: {
-              enabled: false,
-              states: { hover: { enabled: false } }
+                   marker: {
+              enabled: true,
+               states: { hover: { enabled: false } }
+            },
+            dataGrouping: {
+              enabled: false // 确保关闭数据分组
             }
           },
+
           candlestick: {
-            color: '#ea3d3d',
+                  color: '#ea3d3d',
             upColor: '#51a958',
             upLineColor: '#51a958',
             lineColor: '#ea3d3d',
-            pointWidth: 7
+            grouping: false, // 关闭分组
+            minPointLength: 2 // 确保最小可见高度
           }
+          // candlestick: {
+          //   color: '#ea3d3d',
+          //   upColor: '#51a958',
+          //   upLineColor: '#51a958',
+          //   lineColor: '#ea3d3d',
+          //   pointWidth: 7,
+          //   // grouping: false,         // 禁用分组，避免在小屏上过于拥挤
+          //   // pointWidth: 8,          // 固定蜡烛宽度
+          //   // minPointLength: 3       // 最小高度，避免太小的蜡烛看不见
+
+          //   grouping: false,          // 禁用自动分组
+          //   pointPadding: 0.1,        // 蜡烛之间的内边距 (0-1)
+          //   pointWidth: calculatePointWidth(),            // 固定蜡烛宽度(像素)
+          //   minPointLength: 3,        // 最小蜡烛高度
+          //   borderWidth: 1            // 边框宽度
+          // }
+        },
+        responsive: {
+          rules: [
+            {
+              condition: {
+                maxWidth: 800
+              },
+              // chartOptions: {
+              //   rangeSelector: {
+              //     inputEnabled: false
+              //   }
+              // },
+              chartOptions: {
+                // 保持相同的分组策略
+                plotOptions: {
+                  candlestick: {
+                    groupPixelWidth: 8 // 与大屏保持一致
+                  }
+                },
+                // 仅调整视觉元素
+                xAxis: {
+                  labels: {
+                    rotation: -45,
+                    style: {
+                      fontSize: '10px'
+                    }
+                  }
+                }
+              }
+            }
+          ]
         },
         xAxis: {
-          min: initialMin ,
-          max: initialMax ,
+          min: initialMin,
+          max: initialMax,
           // min: initial.initialMin ,
           // max: initial.initialMax ,
           events: {
@@ -379,7 +418,7 @@ const HighchartsChart = ({
         ]
       })
     }
-  }, [data,sma])
+  }, [data, sma])
 
   useEffect(() => {
     if (token && selectedInterval) {
@@ -388,10 +427,20 @@ const HighchartsChart = ({
   }, [token, selectedInterval])
 
   return (
-    <div style={{ paddingTop: '10px',position:'relative' }}>
-      {options && <div style={{ position: 'absolute',left:'0', right:0, 
-      bottom:'12px', height: '40px',
-         background: '#19191b', zIndex: 10 }}></div>}
+    <div style={{ paddingTop: '10px', position: 'relative' }}>
+      {options && (
+        <div
+          style={{
+            position: 'absolute',
+            left: '0',
+            right: 0,
+            bottom: '12px',
+            height: '40px',
+            background: '#19191b',
+            zIndex: 10
+          }}
+        ></div>
+      )}
       {options && (
         <HighchartsReact
           ref={chartRef}

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { getFormatNumber } from '../../utils/debounce'
 import { getKlineHistory, getKline } from '../../requests'
 import { Context } from '../../pages/App.tsx'
+import styled from 'styled-components'
 
 import { formatDate } from '../../utils/dateFormat'
 import BrokenLine from './BrokenLine'
@@ -18,6 +19,40 @@ import linechart from '../../assets/svg/linechart.svg'
 import linechartb from '../../assets/svg/linechartb.svg'
 
 import style from './chartComponent.module.css'
+
+const ChartBom = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+
+  
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+  display: block;
+  font-size: 14px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+
+  `}
+`
+const SelectBom = styled.div`
+ 
+
+  
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+   margin-top: 10px;
+  `}
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+  `}
+  ${({ theme }) => theme.mediaWidth.upToExtraMINI`
+
+  `}
+`
 const ChartComponent = props => {
   const darkMode = useIsDarkMode()
   const { text1, bgto1, bg8 } = colors(darkMode)
@@ -35,8 +70,6 @@ const ChartComponent = props => {
     } = {},
     children
   } = props
-
-
 
   // 鼠标移动到点上的数据
   const [hoverData, setHoverData] = useState({
@@ -75,7 +108,6 @@ const ChartComponent = props => {
   // 图表数据
   const [data, setData] = useState([])
 
-
   // 选中的时间间隔
   const [selectedInterval, setSelectedInterval] = useState(intervalsData[3])
 
@@ -101,11 +133,6 @@ const ChartComponent = props => {
   ])
   // 选中的图表类型
   const [activeGraphType, setActiveGraphType] = useState(graphType[0])
-
-
-
-
-
 
   useEffect(() => {
     if (!hoverIndex || activeGraphType.value === 'line' || !hoverData || !hoverData.time) {
@@ -143,7 +170,6 @@ const ChartComponent = props => {
     }
   })
 
-
   // 获取历史图表数据
   const getHistoryChartData = async () => {
     const res = await getKlineHistory({ token: token, type: selectedInterval.value, lastTime: data[0]?.time })
@@ -161,16 +187,16 @@ const ChartComponent = props => {
     }
   }
 
-
-
   return (
     <div>
-      {children && children({ activeGraphType:activeGraphType.value })}
-    {/* {children({ activeGraphType })} */}
-    {activeGraphType.value === 'candlestick' && <KLine sma={sma} selectedInterval={selectedInterval} token={token}/>}
-    {activeGraphType.value === 'line' && <BrokenLine  selectedInterval={selectedInterval} epriceDecimals={priceDecimals} token={token}/>}
-    
-      <div className={style.chartBom}>
+      {children && children({ activeGraphType: activeGraphType.value })}
+      {/* {children({ activeGraphType })} */}
+      {activeGraphType.value === 'candlestick' && <KLine sma={sma} selectedInterval={selectedInterval} token={token} />}
+      {activeGraphType.value === 'line' && (
+        <BrokenLine selectedInterval={selectedInterval} epriceDecimals={priceDecimals} token={token} />
+      )}
+
+      <ChartBom>
         <div className={style.chartBomBox} style={{ background: bgto1 }}>
           <div
             className={style.intervals}
@@ -192,9 +218,8 @@ const ChartComponent = props => {
             ))}
           </div>
         </div>
-
-        <div className={style.graphType}>
-          <SelectType
+        <SelectBom>
+        <SelectType
             list={graphType}
             activeOption={activeGraphType}
             setActiveOption={setActiveGraphType}
@@ -202,8 +227,9 @@ const ChartComponent = props => {
             isRight={true}
             smIcon={true}
           />
-        </div>
-      </div>
+        </SelectBom>
+  
+      </ChartBom>
     </div>
   )
 }
