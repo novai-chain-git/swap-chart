@@ -4,7 +4,7 @@
   "version": {
     "major": 5,
     "minor": 1,
-    "patch": 10
+    "patch": 11
   },
   "tags": {
     "bases": {
@@ -37,6 +37,15 @@
       "name": "Wrapped wNOVAI",
       "address": "0x2Ab2b37CfB556fE54f9d1B91A8dA8066d0fa3226",
       "symbol": "wNOVAI",
+      "decimals": 18,
+      "disable": false,
+      "chainId": 7256,
+      "logoURI": "localhost:/images/token/novai.svg"
+    },
+    {
+      "name": "Wrapped snovai",
+      "address": "0x9AFE05784e2E29a4bC07921FAFB5159644d0323E",
+      "symbol": "snovai",
       "decimals": 18,
       "disable": false,
       "chainId": 7256,
