@@ -28,8 +28,6 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
   const isInitLoad = useRef(true)
   const { isLodaing, setIsLoading } = React.useContext(Context)
 
-  // const initialMin = ohlc[ohlc.length - 61][0] // 显示最新30%
-  //     const initialMax = ohlc[ohlc.length - 1][0]
   function fixTimestamp(t) {
     return t < 1e11 ? t * 1000 : t // 如果是秒级（10位），就乘1000
   }
@@ -44,43 +42,93 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
   // 获取历史图表数据
   const getHistoryChartData = async () => {
     try {
+      const chart = chartRef.current?.chart
+      if (!chart) return
+
       const res = await getKlineHistory({ token: token, type: selectedInterval.value, lastTime: data[0]?.time })
       if (res.data.length <= 0) return setIsDrag(true)
       if (res.data) {
-        const arr = res.data.map(item => {
-          return {
-            ...item,
-            value: item.close
-          }
-        })
-        const arr1 = arr.reverse()
-
-        // return arr1
+        // chart.redraw()
+    //  const arr = res.data.map(item => {
+    //     return {
+    //       ...item,
+    //       value: item.close
+    //     }
+    //   })
+        //    console.log(mergedData.length,'mergedData')
+      const arr1 = res.data.reverse()
+        setData([...arr1, ...data])
       }
     } catch (e) {
     } finally {
     }
   }
+  //格式化数据
+  function formatData(arr) {
+    const ohlc = []
+    const volume = []
+    let previousCandleClose = 0
 
+    arr.forEach(item => {
+      ohlc.push([
+        fixTimestamp(item.time), // time
+        item.open, // open
+        item.high, // high
+        item.low, // low
+        item.close // close
+      ])
+      volume.push({
+        x: fixTimestamp(item.time),
+        y: item.amount,
+        color: item.close > previousCandleClose ? '#466742' : '#a23f43',
+        labelColor: item.close > previousCandleClose ? '#51a958' : '#ea3d3d'
+      })
+      previousCandleClose = item.close
+    })
+    return { ohlc, volume }
+  }
   useEffect(() => {
-    // console.log(console.log(data,'data'))
-    // if (chartRef.current?.chart) {
-    //   chartRef.current.chart.xAxis[0].setExtremes(null, null, true, false);
-    // }
+    const chart = chartRef.current?.chart
+    if (!chart) return
+    Highcharts.setOptions({
+      chart: {
+        backgroundColor: '#0a0a0a',
+        height: 500
+      },
+      title: { style: { color: '#cccccc' } },
+      xAxis: {
+        gridLineColor: '#181816',
+        labels: { style: { color: '#9d9da2' } }
+      },
+      yAxis: {
+        gridLineColor: '#181816',
+        labels: { style: { color: '#9d9da2' } }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        style: { color: '#cdcdc9' }
+      },
+      scrollbar: {
+        barBackgroundColor: '#464646',
+        barBorderRadius: 0,
+        barBorderWidth: 0,
+        buttonBorderWidth: 0,
+        buttonArrowColor: '#cccccc',
+        rifleColor: '#cccccc',
+        trackBackgroundColor: '#121211',
+        trackBorderRadius: 0,
+        trackBorderWidth: 1,
+        trackBorderColor: '#464646'
+      }
+    })
+  }, [chartRef])
+  useEffect(() => {
+    console.log(data.length, 'data.length')
     // return
     if (data.length > 0) {
-      // const response = await fetch(
-      //   'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
-      // );
-      // const data = await response.json();
-
       const ohlc = []
       const volume = []
       let previousCandleClose = 0
-      //       data.forEach(item => {
-      //   console.log(item,'item')
-      // })
-
       data.forEach(item => {
         ohlc.push([
           fixTimestamp(item.time), // time
@@ -97,58 +145,9 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
         })
         previousCandleClose = item.close
       })
-      // for (let i = 0; i < data.length; i++) {
-      //   ohlc.push([
-      //     data[i][0], // time
-      //     data[i][1], // open
-      //     data[i][2], // high
-      //     data[i][3], // low
-      //     data[i][4]  // close
-      //   ]);
-      //   volume.push({
-      //     x: data[i][0],
-      //     y: data[i][5],
-      //     color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43',
-      //     labelColor: data[i][4] > previousCandleClose ? '#51a958' : '#ea3d3d'
-      //   });
-      //   previousCandleClose = data[i][4];
-      // }
+      console.log(data.length, 'data.length')
+      // let {ohlc,volume} = formatData(data)
 
-      Highcharts.setOptions({
-        chart: {
-          backgroundColor: '#0a0a0a',
-          height: 500
-        },
-        title: { style: { color: '#cccccc' } },
-        xAxis: {
-          gridLineColor: '#181816',
-          labels: { style: { color: '#9d9da2' } }
-        },
-        yAxis: {
-          gridLineColor: '#181816',
-          labels: { style: { color: '#9d9da2' } }
-        },
-        tooltip: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          style: { color: '#cdcdc9' }
-        },
-        scrollbar: {
-          barBackgroundColor: '#464646',
-          barBorderRadius: 0,
-          barBorderWidth: 0,
-          buttonBorderWidth: 0,
-          buttonArrowColor: '#cccccc',
-          rifleColor: '#cccccc',
-          trackBackgroundColor: '#121211',
-          trackBorderRadius: 0,
-          trackBorderWidth: 1,
-          trackBorderColor: '#464646'
-        }
-      })
-      // const initialMin = ohlc[Math.floor(ohlc.length * 0.7)][0]; // 显示最新30%
-      // const initialMin = ohlc[ohlc.length - 61][0] // 显示最新30%
-      // const initialMax = ohlc[ohlc.length - 1][0]
-      // console.log(initialMin, initialMax, 'initialMin, initialMax')
       let initialMin = ohlc[ohlc.length - 90] ? ohlc[ohlc.length - 90][0] : ohlc[0][0]
       let initialMax = ohlc[ohlc.length - 1][0]
 
@@ -210,7 +209,7 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
         scrollbar: {
           enabled: true
         },
-   
+
         chart: {
           panning: {
             enabled: true,
@@ -225,11 +224,10 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
         },
         title: { text: token },
         plotOptions: {
-  
           series: {
-                   marker: {
+            marker: {
               enabled: true,
-               states: { hover: { enabled: false } }
+              states: { hover: { enabled: false } }
             },
             dataGrouping: {
               enabled: false // 确保关闭数据分组
@@ -237,7 +235,7 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
           },
 
           candlestick: {
-                  color: '#ea3d3d',
+            color: '#ea3d3d',
             upColor: '#51a958',
             upLineColor: '#51a958',
             lineColor: '#ea3d3d',
@@ -299,21 +297,22 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
           // max: initial.initialMax ,
           events: {
             setExtremes: async function(e) {
-              console.log(e, 'eventseventseventsevents')
               // if (!e.trigger || e.trigger !== 'pan') return; // 仅处理拖动事件
 
+              const chart = chartRef.current?.chart
               // 计算是否拖动到左侧边缘（阈值设为5%）
-              const visibleRange = e.max - e.min
-              const leftThreshold = e.min - visibleRange * 0.05
-              const oldestDataPoint = fixTimestamp(data[0]?.time)
-              if (oldestDataPoint && leftThreshold <= oldestDataPoint) {
-                if (isHistory.current && !isDrag) {
-                  isHistory.current = false
-                  setIsLoading(true)
-                  await getHistoryChartData()
-                  isHistory.current = true
-                  setIsLoading(false)
-                }
+              const min = e.min
+              const range = e.max - e.min
+              const threshold = min - range * 0.05
+               const oldest = ohlc[0]?.[0]
+              if (oldest && threshold <= oldest && isHistory.current && !isDrag) {
+                console.log(e, 'eventseventseventsevents')
+                console.log(threshold, 'oldestDataPoint',oldest)
+                isHistory.current = false
+                setIsLoading(true)
+                await getHistoryChartData()
+                isHistory.current = true
+                setIsLoading(false)
               }
             }
           }
@@ -378,6 +377,7 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
             type: 'column',
             name: 'Volume',
             data: volume,
+            id: 'volume',
             yAxis: 1,
             borderRadius: 0,
             groupPadding: 0,
@@ -388,7 +388,7 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
           },
           {
             type: 'candlestick',
-            id: 'aapl',
+            id: 'aapls',
             name: 'AAPL Stock Price',
             data: ohlc
             // 你的 tooltip 等其他配置
@@ -424,7 +424,7 @@ const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', 
     if (token && selectedInterval) {
       getChartData()
     }
-  }, [token, selectedInterval])
+  }, [token, selectedInterval, chartRef])
 
   return (
     <div style={{ paddingTop: '10px', position: 'relative' }}>

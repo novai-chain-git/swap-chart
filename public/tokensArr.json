@@ -45,7 +45,7 @@
     {
       "name": "Wrapped snovai",
       "address": "0x9AFE05784e2E29a4bC07921FAFB5159644d0323E",
-      "symbol": "snovai",
+      "symbol": "sNovai",
       "decimals": 18,
       "disable": false,
       "chainId": 7256,

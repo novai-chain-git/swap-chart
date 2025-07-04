@@ -199,6 +199,7 @@ const ChartComponent = props => {
         <BrokenLine selectedInterval={selectedInterval} epriceDecimals={priceDecimals} token={token} />
       )}
 
+
       <ChartBom>
         <div className={style.chartBomBox} style={{ background: bgto1 }}>
           <div

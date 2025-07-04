@@ -2,31 +2,22 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Highcharts from 'highcharts/highstock'
 import HighchartsReact from 'highcharts-react-official'
+import styled from 'styled-components'
 
-// import IndicatorsIkh from 'highcharts/indicators/ichimoku-kinko-hyo'
-// import StockTools from 'highcharts/modules/stock-tools';
-// import FullScreen from 'highcharts/modules/full-screen';
-// import AnnotationsAdvanced from 'highcharts/modules/annotations-advanced';
-// import PriceIndicator from 'highcharts/modules/price-indicator';
-// import HeikinAshi from 'highcharts/modules/heikinashi';
-// import IndicatorsCore from 'highcharts/indicators/indicators-all'
 import { getKlineHistory, getKline } from '../../../requests'
 import { Context } from '../../../pages/App.tsx'
 
-// StockTools(Highcharts);
-//   FullScreen(Highcharts);
-//   AnnotationsAdvanced(Highcharts);
-//   PriceIndicator(Highcharts);
-//   HeikinAshi(Highcharts);
-
-// IndicatorsCore(Highcharts)
-// IndicatorsIkh(Highcharts)
-const HighchartsChart = ({
-  token,
-
-  selectedInterval = { name: '1H', value: 60 }
-}) => {
-  const [options, setOptions] = useState(null)
+const chark = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  background-color: #0a0a0a;
+  height: 40px;
+  z-index: 10;
+`
+const HighchartsChart = ({ token, sma = false, selectedInterval = { name: '1H', value: 60 } }) => {
+  //const [options, setOptions] = useState(null)
 
   //const [isHistory, setIsHistory] = useState(true)
   const isHistory = useRef(true)
@@ -36,17 +27,15 @@ const HighchartsChart = ({
   const [isDrag, setIsDrag] = useState(false)
   const isInitLoad = useRef(true)
   const { isLodaing, setIsLoading } = React.useContext(Context)
+
+
+  function fixTimestamp(t) {
+    return t < 1e11 ? t * 1000 : t // 如果是秒级（10位），就乘1000
+  }
   const getChartData = async () => {
     const res = await getKline({ token: token, type: selectedInterval.value, rows: 200 })
     setOptions(null)
     if (res.data) {
-      // const arr = res.data.map(item => {
-      //   return {
-      //     ...item,
-      //     value: item.close
-      //   }
-      // })
-      // console.log(arr,'res.data')
       setData(res.data)
     }
   }
@@ -54,45 +43,40 @@ const HighchartsChart = ({
   // 获取历史图表数据
   const getHistoryChartData = async () => {
     try {
+      const chart = chartRef.current?.chart;
+    if (!chart) return;
+ 
       const res = await getKlineHistory({ token: token, type: selectedInterval.value, lastTime: data[0]?.time })
       if (res.data.length <= 0) return setIsDrag(true)
       if (res.data) {
-        const arr = res.data.map(item => {
-          return {
-            ...item,
-            value: item.close
-          }
-        })
-        const arr1 = arr.reverse()
-        setData([...arr1, ...data])
-        // return arr1
+        
+    const mergedData = [...res.data, ...data]; 
+    const aapls = chart.get('aapls'); // 用唯一 ID
+    const aapl = chart.get('aapl'); // 用唯一 ID
+    const volumeSeries = chart.get('volume');
+     const { ohlc, volume } = formatData(mergedData);
+
+        if (aapls) aapls.setData(ohlc, false);
+        if (aapl) aapl.setData(ohlc, false);
+    if (volumeSeries) volumeSeries.setData(volume, false);
+    chart.redraw();
+    
+    //    console.log(mergedData.length,'mergedData')
+    // setData([...res.data,...data])
+
       }
     } catch (e) {
     } finally {
     }
   }
-  useEffect(() => {
-    // console.log(console.log(data,'data'))
-    // if (chartRef.current?.chart) {
-    //   chartRef.current.chart.xAxis[0].setExtremes(null, null, true, false);
-    // }
-    // return
-    if (data.length > 0) {
-      // const response = await fetch(
-      //   'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
-      // );
-      // const data = await response.json();
-
-      const ohlc = []
+  //格式化数据
+  function formatData(arr) {
+          const ohlc = []
       const volume = []
       let previousCandleClose = 0
-      //       data.forEach(item => {
-      //   console.log(item,'item')
-      // })
-      function fixTimestamp(t) {
-        return t < 1e11 ? t * 1000 : t // 如果是秒级（10位），就乘1000
-      }
-      data.forEach(item => {
+
+
+      arr.forEach(item => {
         ohlc.push([
           fixTimestamp(item.time), // time
           item.open, // open
@@ -108,26 +92,15 @@ const HighchartsChart = ({
         })
         previousCandleClose = item.close
       })
-      // for (let i = 0; i < data.length; i++) {
-      //   ohlc.push([
-      //     data[i][0], // time
-      //     data[i][1], // open
-      //     data[i][2], // high
-      //     data[i][3], // low
-      //     data[i][4]  // close
-      //   ]);
-      //   volume.push({
-      //     x: data[i][0],
-      //     y: data[i][5],
-      //     color: data[i][4] > previousCandleClose ? '#466742' : '#a23f43',
-      //     labelColor: data[i][4] > previousCandleClose ? '#51a958' : '#ea3d3d'
-      //   });
-      //   previousCandleClose = data[i][4];
-      // }
-
-      Highcharts.setOptions({
+      return { ohlc, volume }
+  }
+  useEffect(()=>{
+      const chart = chartRef.current?.chart;
+    if (!chart) return;
+    Highcharts.setOptions({
         chart: {
-          backgroundColor: '#0a0a0a'
+          backgroundColor: '#0a0a0a',
+          height: 500
         },
         title: { style: { color: '#cccccc' } },
         xAxis: {
@@ -154,82 +127,206 @@ const HighchartsChart = ({
           trackBorderWidth: 1,
           trackBorderColor: '#464646'
         }
-
-        // exporting: {
-        //   verticalAlign: 'bottom'
-        //   // enabled: true,
-        //   // buttons: {
-        //   //   contextButton: {
-        //   //     theme: { fill: '#121211' },
-        //   //     menuItems:[]
-        //   //   }
-        //   // }
-        // }
       })
+  },[
+    chartRef
+  ])
+  useEffect(() => {
+    console.log(data.length, 'data.length')
+    // return
+    if (data.length > 0) {
 
+      const ohlc = []
+      const volume = []
+      let previousCandleClose = 0
+
+      data.forEach(item => {
+        ohlc.push([
+          fixTimestamp(item.time), // time
+          item.open, // open
+          item.high, // high
+          item.low, // low
+          item.close // close
+        ])
+        volume.push({
+          x: fixTimestamp(item.time),
+          y: item.amount,
+          color: item.close > previousCandleClose ? '#466742' : '#a23f43',
+          labelColor: item.close > previousCandleClose ? '#51a958' : '#ea3d3d'
+        })
+        previousCandleClose = item.close
+      })
+      console.log(data.length, 'data.length')
+     // let {ohlc,volume} = formatData(data)
+
+
+      
+      let initialMin = ohlc[ohlc.length - 90] ? ohlc[ohlc.length - 90][0] : ohlc[0][0]
+      let initialMax = ohlc[ohlc.length - 1][0]
+
+      const smaList = sma
+        ? [
+            {
+              type: 'sma',
+              linkedTo: 'aapl',
+              params: { period: 3 },
+              color: '#FFD700',
+              name: 'MA3'
+            },
+            {
+              type: 'sma',
+              linkedTo: 'aapl',
+              params: { period: 5 },
+              color: '#00FFFF',
+              name: 'MA5'
+            },
+            {
+              type: 'sma',
+              linkedTo: 'aapl',
+              params: { period: 10 },
+              color: '#728efd',
+              name: 'MA10'
+            }
+          ]
+        : []
+      // const smaList = [{
+      //   type: 'sma',
+      //   linkedTo: 'aapl',
+      //   params: { period: 3 },
+      //   color: '#FFD700',
+      //   name: 'MA3'
+      // },
+      // {
+      //   type: 'sma',
+      //   linkedTo: 'aapl',
+      //   params: { period: 5 },
+      //   color: '#00FFFF',
+      //   name: 'MA5'
+      // },
+      // {
+      //   type: 'sma',
+      //   linkedTo: 'aapl',
+      //   params: { period: 10 },
+      //   color: '#728efd',
+      //   name: 'MA10'
+      // }]
       setOptions({
         rangeSelector: { enabled: false, inputEnabled: true, selected: 1 },
-        navigator: { enabled: false, adaptToUpdatedData: false, baseSeries: 0 },
+        navigator: {
+          enabled: true,
+          adaptToUpdatedData: false,
+          baseSeries: 0,
+          height: 20
+        },
 
+        scrollbar: {
+          enabled: true
+        },
+   
+        chart: {
+          panning: {
+            enabled: true,
+            type: 'x' // 仅允许水平拖动
+          },
+          events: {
+            load: function(as) {
+              // 初始加载后强制显示最新数据范围
+              this.xAxis[0].setExtremes(null, null)
+            }
+          }
+        },
+        title: { text: token },
+        plotOptions: {
+  
+          series: {
+                   marker: {
+              enabled: true,
+               states: { hover: { enabled: false } }
+            },
+            dataGrouping: {
+              enabled: false // 确保关闭数据分组
+            }
+          },
+
+          candlestick: {
+                  color: '#ea3d3d',
+            upColor: '#51a958',
+            upLineColor: '#51a958',
+            lineColor: '#ea3d3d',
+            grouping: false, // 关闭分组
+            minPointLength: 2 // 确保最小可见高度
+          }
+          // candlestick: {
+          //   color: '#ea3d3d',
+          //   upColor: '#51a958',
+          //   upLineColor: '#51a958',
+          //   lineColor: '#ea3d3d',
+          //   pointWidth: 7,
+          //   // grouping: false,         // 禁用分组，避免在小屏上过于拥挤
+          //   // pointWidth: 8,          // 固定蜡烛宽度
+          //   // minPointLength: 3       // 最小高度，避免太小的蜡烛看不见
+
+          //   grouping: false,          // 禁用自动分组
+          //   pointPadding: 0.1,        // 蜡烛之间的内边距 (0-1)
+          //   pointWidth: calculatePointWidth(),            // 固定蜡烛宽度(像素)
+          //   minPointLength: 3,        // 最小蜡烛高度
+          //   borderWidth: 1            // 边框宽度
+          // }
+        },
         responsive: {
           rules: [
             {
               condition: {
                 maxWidth: 800
               },
+              // chartOptions: {
+              //   rangeSelector: {
+              //     inputEnabled: false
+              //   }
+              // },
               chartOptions: {
-                rangeSelector: {
-                  inputEnabled: false
+                // 保持相同的分组策略
+                plotOptions: {
+                  candlestick: {
+                    groupPixelWidth: 8 // 与大屏保持一致
+                  }
+                },
+                // 仅调整视觉元素
+                xAxis: {
+                  labels: {
+                    rotation: -45,
+                    style: {
+                      fontSize: '10px'
+                    }
+                  }
                 }
               }
             }
           ]
         },
-        chart: {
-          events: {
-            load: function(as) {
-              // 初始加载后强制显示最新数据范围
-              this.xAxis[0].setExtremes(null, null);
-            }
-          }
-        },
-        scrollbar: {
-          enabled: false // 禁用滚动条
-        },
-        // chart: {
-        //     panning: true, // 启用拖动
-        //     panKey: 'shift' // 按住shift键拖动
-        // },
-        title: { text: token },
-        plotOptions: {
-          series: {
-            marker: {
-              enabled: false,
-              states: { hover: { enabled: false } }
-            }
-          },
-          candlestick: {
-            color: '#ea3d3d',
-            upColor: '#51a958',
-            upLineColor: '#51a958',
-            lineColor: '#ea3d3d',
-            pointWidth: 7
-          }
-        },
         xAxis: {
+          min: initialMin,
+          max: initialMax,
+          // min: initial.initialMin ,
+          // max: initial.initialMax ,
           events: {
-            setExtremes: function(e) {
-              console.log(e,'eventseventseventsevents')
+            setExtremes: async function(e) {
+              console.log(e, 'eventseventseventsevents')
               // if (!e.trigger || e.trigger !== 'pan') return; // 仅处理拖动事件
-              
-              // // 计算是否拖动到左侧边缘（阈值设为5%）
-              // const range = e.max - e.min;
-              // const threshold = e.min - range * 0.05;
-              // const oldestPoint = data[0]?.time;
-              
-              // if (oldestPoint && threshold <= oldestPoint) {
-              //   loadHistoryData(oldestPoint);
-              // }
+
+              // 计算是否拖动到左侧边缘（阈值设为5%）
+              const visibleRange = e.max - e.min
+              const leftThreshold = e.min - visibleRange * 0.05
+              const oldestDataPoint = fixTimestamp(data[0]?.time)
+              if (oldestDataPoint && leftThreshold <= oldestDataPoint) {
+                if (isHistory.current && !isDrag) {
+                  isHistory.current = false
+                  setIsLoading(true)
+                  await getHistoryChartData()
+                  isHistory.current = true
+                  setIsLoading(false)
+                }
+              }
             }
           }
         },
@@ -246,13 +343,13 @@ const HighchartsChart = ({
         //       const range = e.max - e.min
         //       const threshold = e.min - range * 0.05
         //       console.log(e, 'e', 'e', isHistory)
-        //       if (isHistory.current && !isDrag) {
-        //         isHistory.current = false
-        //         setIsLoading(true)
-        //         await getHistoryChartData()
-        //         isHistory.current = true
-        //         setIsLoading(false)
-        //       }
+        // if (isHistory.current && !isDrag) {
+        //   isHistory.current = false
+        //   setIsLoading(true)
+        //   await getHistoryChartData()
+        //   isHistory.current = true
+        //   setIsLoading(false)
+        // }
         //     }
         //   }
         // },
@@ -293,6 +390,7 @@ const HighchartsChart = ({
             type: 'column',
             name: 'Volume',
             data: volume,
+            id: 'volume',
             yAxis: 1,
             borderRadius: 0,
             groupPadding: 0,
@@ -303,70 +401,59 @@ const HighchartsChart = ({
           },
           {
             type: 'candlestick',
-            id: 'aapl',
+            id: 'aapls',
             name: 'AAPL Stock Price',
             data: ohlc
             // 你的 tooltip 等其他配置
           },
-          {
-            type: 'sma',
-            linkedTo: 'aapl',
-            params: { period: 3 },
-            color: '#FFD700',
-            name: 'MA3'
-          },
-          {
-            type: 'sma',
-            linkedTo: 'aapl',
-            params: { period: 5 },
-            color: '#00FFFF',
-            name: 'MA5'
-          },
-          {
-            type: 'sma',
-            linkedTo: 'aapl',
-            params: { period: 10 },
-            color: '#728efd',
-            name: 'MA10'
-          }
           // {
-          //   type: 'ikh',
+          //   type: 'sma',
           //   linkedTo: 'aapl',
-          //   tooltip: {
-          //     pointFormat: `
-          //       <br/>
-          //       <span style="color: #666;">IKH</span><br/>
-          //       tenkan sen: <span style="color:{series.options.tenkanLine.styles.lineColor}">{point.tenkanSen:.3f}</span><br/>
-          //       kijun sen: <span style="color:{series.options.kijunLine.styles.lineColor}">{point.kijunSen:.3f}</span><br/>
-          //       chikou span: <span style="color:{series.options.chikouLine.styles.lineColor}">{point.chikouSpan:.3f}</span><br/>
-          //       senkou span A: <span style="color:{series.options.senkouSpanA.styles.lineColor}">{point.senkouSpanA:.3f}</span><br/>
-          //       senkou span B: <span style="color:{series.options.senkouSpanB.styles.lineColor}">{point.senkouSpanB:.3f}</span><br/>
-          //     `
-
-          //   },
-          //   tenkanLine: { styles: { lineColor: '#12dbd1' } },
-          //   kijunLine: { styles: { lineColor: '#de70fa' } },
-          //   chikouLine: { styles: { lineColor: '#728efd' } },
-          //   senkouSpanA: { styles: { lineColor: '#2ad156' } },
-          //   senkouSpanB: { styles: { lineColor: '#fca18d' } },
-          //   senkouSpan: {
-          //     color: 'rgba(255, 255, 255, 0.3)',
-          //     negativeColor: 'rgba(237, 88, 71, 0.2)'
-          //   }
+          //   params: { period: 3 },
+          //   color: '#FFD700',
+          //   name: 'MA3'
+          // },
+          // {
+          //   type: 'sma',
+          //   linkedTo: 'aapl',
+          //   params: { period: 5 },
+          //   color: '#00FFFF',
+          //   name: 'MA5'
+          // },
+          // {
+          //   type: 'sma',
+          //   linkedTo: 'aapl',
+          //   params: { period: 10 },
+          //   color: '#728efd',
+          //   name: 'MA10'
           // }
+          ...smaList
         ]
       })
     }
-  }, [data])
+  }, [data, sma])
 
   useEffect(() => {
     if (token && selectedInterval) {
       getChartData()
     }
-  }, [token, selectedInterval])
+  }, [token, selectedInterval, chartRef])
 
   return (
-    <div style={{ paddingTop: '10px' }}>
+    <div style={{ paddingTop: '10px', position: 'relative' }}>
+      {/* {options && (
+        <div
+          style={{
+            position: 'absolute',
+            left: '0',
+            right: 0,
+            bottom: '12px',
+            height: '40px',
+            background: '#19191b',
+            zIndex: 10
+          }}
+        ></div>
+      )} */}
       {options && (
         <HighchartsReact
           ref={chartRef}

@@ -30,7 +30,7 @@ const ChartComponent = props => {
       areaTopColor = '#85d25a',
       areaBottomColor = 'rgba(108, 201, 109, 0.28)'
     } = {},
-    selectedInterval ={ name: '1H', value: 60 }
+    selectedInterval = { name: '1H', value: 60 }
   } = props
 
   const { isLodaing, setIsLoading } = React.useContext(Context)
@@ -69,6 +69,7 @@ const ChartComponent = props => {
   // const [tooltipValue, setTooltipValue] = useState(null)
   // 鼠标移入的数值的下标
   const [hoverIndex, setHoverIndex] = useState(null)
+  const [lastFrom, setLastFrom] = useState(null)
 
   // 图表数据
   const [data, setData] = useState([])
@@ -86,15 +87,12 @@ const ChartComponent = props => {
     }
   }
 
-
   useEffect(() => {
-    if(selectedInterval.value && token){
-
+    if (selectedInterval.value && token) {
       getChartData(selectedInterval.value)
       setIsDrag(false)
     }
-  },[selectedInterval, token])
-
+  }, [selectedInterval, token])
 
   // 选中的图表类型
   const [activeGraphType, setActiveGraphType] = useState({
@@ -173,8 +171,8 @@ const ChartComponent = props => {
   // 获取历史图表数据
   const getHistoryChartData = async () => {
     const res = await getKlineHistory({ token: token, type: selectedInterval.value, lastTime: data[0]?.time })
-    if (res.data.length <= 0) return setIsDrag(true)
-    if (res.data) {
+
+    if (res.data && res.data.length > 0) {
       const arr = res.data.map(item => {
         return {
           ...item,
@@ -183,8 +181,13 @@ const ChartComponent = props => {
       })
       const arr1 = arr.reverse()
       setData([...arr1, ...data])
+
       // return arr1
+    } else {
+      setIsDrag(true)
     }
+    setIsHistory(true)
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -344,15 +347,36 @@ const ChartComponent = props => {
 
     // 历史数据
     chart.timeScale().subscribeVisibleLogicalRangeChange(async logicalRange => {
-      // console.log('logicalRange', logicalRange)
-      if (-20 < logicalRange.from && logicalRange.from < -10 && isHistory && !isDrag) {
+      console.log('logicalRange', logicalRange)
+       const currentFrom = logicalRange.from;
+     // if (-20 < logicalRange.from && logicalRange.from < -10 && isHistory && !isDrag) {
+      if ( isHistory && !isDrag && (currentFrom < -10 || (lastFrom !== null && currentFrom - lastFrom < -20))) {
         setIsHistory(false)
         setIsLoading(true)
-        await getHistoryChartData()
+        //  await getHistoryChartData()
+        const res = await getKlineHistory({ token: token, type: selectedInterval.value, lastTime: data[0]?.time })
         // newSeries.setData(data)
+        if (res.data && res.data.length > 0) {
+          const arr = res.data.map(item => {
+            return {
+              ...item,
+              value: item.close
+            }
+          })
+          const arr1 = arr.reverse()
+          setData([...arr1, ...data])
+
+          // return arr1
+        } else {
+          setIsDrag(true)
+           chart.timeScale().scrollToPosition(0, false);
+        }
         setIsHistory(true)
         setIsLoading(false)
+      }else{
+       // chart.timeScale().scrollToPosition(0, false);
       }
+      setLastFrom(currentFrom)
     })
 
     const handleResize = () => {
